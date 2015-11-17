@@ -5,5 +5,11 @@
 
 <link href='https://fonts.googleapis.com/css?family=Merriweather:300%7CRaleway%7COpen+Sans' rel='stylesheet' type='text/css'>
 <link rel="stylesheet" href="{{ "/css/font-awesome.min.css" | absURL }}">
+<link rel="stylesheet" href="{{ "/css/asciidoctor.css" | absURL }}">
 <link rel="stylesheet" href="{{ "/css/style.css" | absURL }}">
-{{ if isset .Site.Params "highlight" }}<link rel="stylesheet" href="{{ "/css/highlight/" | absURL }}{{ .Site.Params.highlight }}.css">{{ end }}
+
+{{ if isset .Site.Params "highlight" }}
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/styles/{{ .Site.Params.highlight }}.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+{{ end }}

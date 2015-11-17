@@ -1,0 +1,37 @@
+---
+title: "Authoring a blog with Hugo and Asciidoc"
+description: "Spring Boot Configuration guided tour description"
+tags: [ "Hugo", "golang", "static" ]
+date: "2015-11-19"
+categories:
+  - "Development"
+  - "Blog"
+---
+:id: hugo-asciidoc
+:icons: font
+:gradle: http://www.gradle.org[Gradle]
+
+Edit the template file for the header: it can be found in the partials directory.
+
+[themes/hyde-y/layouts/partials/base/imports.hhml]
+[source,html]
+----
+{{ "<!--[if lt IE 9]>" | safeHTML }}
+<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+{{ "<![endif]-->" | safeHTML }}
+
+<link href='https://fonts.googleapis.com/css?family=Merriweather:300%7CRaleway%7COpen+Sans' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="{{ "/css/font-awesome.min.css" | absURL }}">
+<link rel="stylesheet" href="{{ "/css/asciidoctor.css" | absURL }}">  <1>
+<link rel="stylesheet" href="{{ "/css/style.css" | absURL }}">
+
+<2>
+{{ if isset .Site.Params "highlight" }}
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/styles/{{ .Site.Params.highlight }}.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+{{ end }}
+----
+<1> Add the AsciiDoctor CSS.
+<2> Configure and add Highlight JS script and CSS.
