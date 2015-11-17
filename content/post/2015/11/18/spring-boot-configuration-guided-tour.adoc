@@ -1,0 +1,195 @@
+---
+title: "Spring Boot Configuration guided tour"
+description: "Spring Boot Configuration guided tour description"
+tags: [ "Spring Boot", "Configuration", "Java", "Gradle" ]
+date: "2015-11-18"
+categories:
+  - "Development"
+  - "Java"
+---
+:id: spring-boot-configuration
+:icons: font
+:gradle: http://www.gradle.org[Gradle]
+
+In this post I will summarize everything I've learned using http://projects.spring.io/spring-boot/[Spring Boot] configuration system: there is
+excellent documentation on the Spring Boot website, but I found out that things are a bit scattered. I hope this entry
+can be of any help for developers getting started with Spring Boot.
+
+== Getting started
+
+=== Clone the demo project
+
+I've created a Java based project with a Gradle build, the application properties are defined using YAML:
+Link to Github project
+
+=== The sample YAML configuration file
+
+Let's start with the configuration file as there is  already a few things worth noting here:
+
+[source,yaml]
+----
+
+spring:
+    application:
+        name: demo
+
+configuration-app:            # <1>
+  api-url: http://localhost
+  api-key: 1234567890
+  api-user: localuser
+
+---
+
+spring:
+  profiles: development       # <2>
+  server:
+    port: 9000
+
+demoapp:
+  api-url: http://dev.apiserver.internal
+  api-key: SECRET
+  api-user: devuser
+  skipCertificateCheck: !!bool "true"
+
+---
+
+spring:
+  profiles: production
+  server:
+    port: 8080
+demoapp:
+  api-url: https://realstuff.com
+  api-key: SECRET
+  api-user: SECRET
+  skipCertificateCheck: !!bool "false"
+----
+
+<1> We have a ```configuration-app``` namespace that we can use later for binding to a bean.
+<2> A single YAML file can contain multiple configurations: this file contains also the ```development``` profile.
+
+== Injecting the configuration into Spring components
+
+=== Using ```@Value()``` annotations
+
+You can use a new syntax inherited from Groovy (but that works with Java classes as well) that allows you to inject your
+configuration into class members like this:
+
+[source,java]
+----
+import org.springframework.stereotype.*
+import org.springframework.beans.factory.annotation.*
+
+@Component
+public class MyBean {
+
+    @Value("${api-url}") //<1>
+    private String apiUrl;
+
+    // ...
+}
+----
+<1> New "Groovy like" syntax.
+
+=== Using type safe configuration properties
+
+But I preferred to use the new strongly typed configuration that can automatically bind the properties to a POJO.
+
+Advantages:
+
+* no dangling String in your code and you have standard code completion in any IDE.
+* it is more refactoring friendly.
+* you can enforce validation rules
+
+Here is the Bean that will hold the configuration for the namespace ```configuration-app```:
+
+[source,java]
+----
+package demo;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
+
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.NotNull;
+import java.net.URL;
+
+@Component
+@ConfigurationProperties(prefix = "configuration-app")   //<1>
+public class SpringBootPropertiesApplicationSettings {
+
+    @NotNull
+    private URL apiUrl;        //<2>
+    @NotNull
+    private String apiKey;
+    @NotNull
+    private String apiUser;
+    @Digits(integer = 12, fraction = 0)    //<3>
+    private int connectionTimeout;
+    @Digits(integer = 12, fraction = 0)
+    private int connectionRequestTimeout;
+----
+<1> we can tell Spring that we are interested only in the namespace ```configuration-app```
+<2> In YAML we are using ```api-url```, but the Java bean is using ```apiUrl```, following Java conventions. This is called relaxed binding.
+<3> We can use standard annotations to enforce validation of properties.
+
+[NOTE]
+.Relaxed binding
+=================================================================================
+http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html#boot-features-external-config-relaxed-binding[Relaxed binding]
+works also for uppercase, lowercase and underscore.
+=================================================================================
+
+=== Error reporting and validation
+
+Shall you make a mistake in your configuration file, Spring will print an informative error message:
+[source,java]
+----
+Caused by: org.springframework.validation.BindException: org.springframework.validation.BeanPropertyBindingResult: 2 errors
+Field error in object 'demoapp' on field 'apiUrl': rejected value [http//localhost]; codes [typeMismatch.demoapp.apiUrl,typeMismatch.apiUrl,typeMismatch.java.net.URL,typeMismatch]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [demoapp.apiUrl,apiUrl]; arguments []; default message [apiUrl]]; default message [Failed to convert property value of type 'java.lang.String' to required type 'java.net.URL' for property 'apiUrl'; nested exception is org.springframework.core.convert.ConverterNotFoundException: No converter found capable of converting from type java.lang.String to type @javax.validation.constraints.NotNull java.net.URL] // <1>
+Field error in object 'demoapp' on field 'apiKey': rejected value [null]; codes [NotNull.demoapp.apiKey,NotNull.apiKey,NotNull.java.lang.String,NotNull]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [demoapp.apiKey,apiKey]; arguments []; default message [apiKey]]; default message [may not be null]                                                                                                                                                                                                                                                                                                                                               // <2>
+----
+
+<1> Unfortunately here the error message is a bit confusing: the value is rejected because ```http//localhost``` cannot be converted to ```java.net.URL``` , not because of type mismatch.
+<2> This error is more clear: we cannot leave apiKey empty (or null)
+
+If you want to go further with validation of properties, you can also create your own https://github.com/spring-projects/spring-boot/tree/master/spring-boot-samples/spring-boot-sample-property-validation[Custom validators]
+
+=== Generating configuration meta-data
+
+Spring Boot provides an annotation processor that can scan your configuration Beans and generate a JSON documentation.
+http://docs.spring.io/spring-boot/docs/1.2.5.RELEASE/reference/html/configuration-metadata.html#configuration-metadata-annotation-processor[Spring boot annotation processor setup]
+
+This documentation is then used by your IDE to offer completion and validation of properties:
+
+image::../custom-props-completion.PNG[Custom properties completion, title="Custom properties completion"]
+This is also working with the relaxed binding!
+
+image::../relaxed-binding-validation.PNG[Relaxed binding validation, title="Relaxed binding validation"]
+
+== Using Spring profiles
+
+Spring profiles allows you to manage
+
+Spring Boot is using https://code.google.com/p/snakeyaml/[Snake Yaml] which implements the Yaml 1.1 spec. Yaml have support
+for type safe Collections and Maps
+
+== Spring Cloud Config
+
+=== Encrypting sensitive properties
+
+I found the name Spring Cloud a bit misleading because in this module you also find features to encrypt properties.
+
+
+=== Managing a configuration server
+
+For production it is recommended to use a Git server, but the demo project is configured to look for a property file in the default path.
+
+Spring Cloud Config offers a mechanism to dynamically reload properties using a REST API
+
+== Conclusion
+
+Spring, as an enterprise framework, always had excellent support for application configuration, and when working with Spring
+Boot I was glad to see that this support is even better now.
+
+It seems to me that configuration and logging are often overlooked topics because they seem to be a mundane task.
+I believe it is important to have solid logging and application configuration as that can save a lot of money to your company.
