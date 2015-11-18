@@ -60,8 +60,9 @@ taxonomies:
   tag: "tags"
   topic: "topics"
 # theme to use (located in /themes/THEMENAME/)
-theme:                      "hugo-theme-crisp" #"hyde-y" #"hugo-bootstrap"
+theme:                      "hugo-theme-foundation5" #"hugo-theme-crisp" #"hyde-y"
 title:                      "Blog"
+description:                "Olivier's blog"
 # if true, use /filename.html instead of /filename/
 uglyURLs:                   false
 # verbose output
@@ -74,13 +75,15 @@ disqusShortname: "obourgeoispro-github-io"
 
 params:
   # You can use markdown here.
-  brand: "Olivier Bourgeois's blog"
+  brand: "Olivier's blog"
   # topline: ""
   footline: "code with <i class='fa fa-heart'></i>"
 
   # Sidebar position
   # false, true, "left", "right"
   sidebar: "false"
+
+  comments: "true"
 
   # Text for the top menu link, which goes the root URL for the site.
   # Default (if omitted) is "Home".

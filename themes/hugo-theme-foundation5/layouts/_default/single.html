@@ -1,0 +1,27 @@
+{{ $baseurl := .Site.BaseURL }}
+{{ partial "header.html" . }}
+<div class="row">
+    <div class="large-9 columns" role="content" id="content">
+        <article id="{{ .Slug }}">
+            <h3><a href="{{ .Permalink }}">{{ .Title }}</a></h3>
+            <h6>
+                <time datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" | safeHTML }}">
+                {{ .Date.Format "2 Jan 2006" }}
+                </time>
+            </h6>
+            {{if .Params.tags }}
+                &middot;
+                {{ range $index, $tag := .Params.tags }}
+					<a href="{{ $baseurl }}tags/{{ $tag | urlize }}/"><span class="label">{{ $tag }}</span></a>
+				{{ end }}
+            {{ end }}
+
+            {{ .Content }}
+            {{ partial "share.html" . }}
+            {{ partial "comments.html" . }}
+        </article>
+
+        <hr/>
+    </div>
+</div>
+{{ partial "footer.html" . }}
