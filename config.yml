@@ -1,7 +1,7 @@
 ---
 archetypedir:               "archetype"
 # hostname (and path) to the root eg. http://spf13.com/
-baseURL:                    "http://obourgeoispro.me"
+baseURL:                    "http://obourgeoispro.me/"
 # include content marked as draft
 buildDrafts:                false
 # include content with publishdate in the future
@@ -74,15 +74,9 @@ watch:                      false
 disqusShortname: "obourgeoispro-github-io"
 
 params:
-  # You can use markdown here.
-  brand: "Olivier's blog"
-  # topline: ""
-  footline: "code with <i class='fa fa-heart'></i>"
-
   # Sidebar position
   # false, true, "left", "right"
-  sidebar: "false"
-
+  sidebar: "true"
   comments: "true"
 
   # Text for the top menu link, which goes the root URL for the site.
@@ -90,11 +84,8 @@ params:
   home: "Home"
 
   # Select a syntax highight.
-  # Check the static/css/highlight directory for options.
+  # Check the Highlight.js website for options.
   highlight: "idea"
-
-  # Enable Disqus integration
-  disqusShortname: "obourgeoispro-github-io"
 
   # Google Analytics.
   googleAnalytics: "Your Google Analytics tracking code"
@@ -102,10 +93,10 @@ params:
   # Sidebar social links.
   github: "obourgeoispro" # Your Github profile ID
   bitbucket: "" # Your Bitbucket profile ID
-  linkedin: "" # Your LinkedIn profile ID (from public URL)
+  linkedin: "obourgeois" # Your LinkedIn profile ID (from public URL)
   googleplus: "" # Your Google+ profile ID
   facebook: "" # Your Facebook profile ID
-  twitter: "" # Your Twitter profile ID
+  twitter: "OlivierZentak" # Your Twitter profile ID
   youtube: ""  # Your Youtube channel ID
   flattr: ""  # populate with your flattr uid
 ---
