@@ -6,6 +6,7 @@ date: "2015-11-18"
 categories:
   - "Development"
   - "Java"
+id: spring-boot-configuration
 ---
 :id: spring-boot-configuration
 :icons: font

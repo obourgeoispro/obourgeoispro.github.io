@@ -1,6 +1,9 @@
-
-<a href="https://www.facebook.com/sharer/sharer.php?u={{ .Permalink }}&t={{ .Title }}" target="_blank" title="Share on Facebook" class="fc-webicon facebook"></a>
-<a href="https://twitter.com/intent/tweet?source={{ .Permalink }}&text={{ .Title }}:{{ .Permalink }}&via={{ .Site.Params.twitter }}" target="_blank" title="Tweet"><i class="fc-webicon twitter"></i></a>
-<a href="https://plus.google.com/share?url={{ .Permalink }}" target="_blank" title="Share on Google+"><i class="fc-webicon googleplus"></i></a>
-<!--<a href="http://pinterest.com/pin/create/button/?url={{ .Permalink }}&media={PAGEIMAGEURL}&description={PAGEDESCRIPTION}" target="_blank" title="Pin it"><i class="fi fi-social-pinterest"></i></a>-->
-<a href="mailto:?subject={{ .Title }}&body={{ .Description }}:{{ .Permalink }}" target="_blank" title="Email"><i class="fc-webicon mail"></i></a>
+<div id="share-buttons">
+    <ul class="inline-list center">
+        <a href="https://twitter.com/intent/tweet?source={{ .Permalink }}&text={{ .Title }}:{{ .Permalink }}&via={{ .Site.Params.twitter }}" target="_blank" title="Tweet"><i class="fc-webicon twitter large"></i></a>
+        <a href="https://plus.google.com/share?url={{ .Permalink }}" target="_blank" title="Share on Google+"><i class="fc-webicon googleplus large"></i></a>
+        <a href="mailto:?subject={{ .Title }}&body={{ .Description }}:{{ .Permalink }}" target="_blank" title="Email"><i class="fc-webicon mail large"></i></a>
+        <a href="https://www.facebook.com/sharer/sharer.php?u={{ .Permalink }}&t={{ .Title }}" target="_blank" title="Share on Facebook" class="fc-webicon facebook large"></a>
+        <!--<a href="http://pinterest.com/pin/create/button/?url={{ .Permalink }}&media={PAGEIMAGEURL}&description={PAGEDESCRIPTION}" target="_blank" title="Pin it"><i class="fi fi-social-pinterest"></i></a>-->
+    </ul>
+</div>

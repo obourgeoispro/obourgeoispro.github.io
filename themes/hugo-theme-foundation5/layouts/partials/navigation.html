@@ -1,15 +1,12 @@
-<div class="row">
-    <div class="large-12 columns">
-        <div class="nav-bar right">
-            <ul class="button-group">
-                <li><a href="#" class="button">Link 1</a></li>
-                <li><a href="#" class="button">Link 2</a></li>
-                <li><a href="#" class="button">Link 3</a></li>
-                <li><a href="#" class="button">Link 4</a></li>
+<div class="contain-to-grid sticky">
+    <nav class="top-bar" data-topbar role="navigation">
+        <ul class="title-area">
+            <li class="name"><h1><a href="{{ .Site.BaseURL }}">{{.Site.Title}}</a></h1></li>
+        </ul>
+        <section class="top-bar-section">
+            <ul class="right">
+                {{ partial "follow.html" . }}
             </ul>
-        </div>
-
-        <h1><a href="{{.Site.BaseURL}}">{{.Site.Title}}</a><small>{{.Site.Params.Brand}}</small></h1>
-        <hr/>
-    </div>
+        </section>
+    </nav>
 </div>

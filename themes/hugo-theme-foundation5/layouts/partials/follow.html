@@ -1,6 +1,10 @@
-<div id="follow-icons">
-	<a href="http://twitter.com/{{ .Site.Params.twitter}}" rel="me"><i class="fa fa-twitter-square fa-2x"></i></a>
-	<a href="http://linkedin.com/in/{{ .Site.Params.linkedin}}" rel="me"><i class="fa fa-linkedin-square fa-2x"></i></a>
-	<a href="http://github.com/{{ .Site.Params.github}}" rel="me"><i class="fa fa-github-square fa-2x"></i></a>
-	<a href="{{ .Site.BaseURL }}index.xml" rel="me"><i class="fa fa-rss-square fa-2x"></i></a>
-</div>  
+{{ with .Site.Params.twitter}}
+<li><a href="http://twitter.com/{{ . }}" rel="me">Twitter</a></li>
+{{ end }}
+{{ with .Site.Params.linkedin}}
+<li><a href="http://linkedin.com/in/{{ . }}" rel="me">LinkedIn</a></li>
+{{ end }}
+{{ with .Site.Params.github }}
+<li><a href="http://github.com/{{ . }}" rel="me">Github</a></li>
+{{ end }}
+<li><a href="{{ .Site.BaseURL }}index.xml" rel="me">RSS Feed</a></li>
