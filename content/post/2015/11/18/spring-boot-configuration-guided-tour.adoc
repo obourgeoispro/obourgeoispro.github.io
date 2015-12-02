@@ -21,11 +21,11 @@ can be of any help for developers getting started with Spring Boot.
 === Clone the demo project
 
 I've created a Java based project with a Gradle build, the application properties are defined using YAML:
-Link to Github project
+https://github.com/obourgeoispro/spring-boot-configuration-demo
 
 === The sample YAML configuration file
 
-Let's start with the configuration file as there is  already a few things worth noting here:
+Let's start with the configuration file as there are already a few things worth noting here:
 
 [source,yaml]
 ----
@@ -179,15 +179,25 @@ for type safe Collections and Maps
 === Encrypting sensitive properties
 
 I found the name Spring Cloud a bit misleading because in this module you also find features to encrypt properties.
+To encrypt your properties, you can use the command line with http://cloud.spring.io/spring-cloud-cli/[Spring Cloud CLI] or use the
+REST endpoint ```/encrypt```.
 
+You can use symmetric encryption with a key configured in the ```bootstrap.yml``` file, or, more realistically,
+you'll want to use the system property `````` or a parameter on the command line
+
+There is also the possibility to use http://cloud.spring.io/spring-cloud-config/spring-cloud-config.html#_key_management[asymmetric keys]
+
+[NOTE]
+.Exception due to "illegal key size"
+You'll probably get this exception if you are using the SUN JDK, the README explains
+https://github.com/spring-cloud/spring-cloud-commons[how to install the Java Cryptographic Extension]
 
 === Managing a configuration server
 
 For production it is recommended to use a Git server, but the demo project is configured to look for a property file in the default path ```resources/config``` and we
 https://stackoverflow.com/questions/27131143/spring-cloud-configuration-server-not-working-with-local-properties-file[activate the native profile].
 
-
-Spring Cloud Config offers a mechanism to dynamically reload properties using a REST API
+Spring Cloud Config offers a mechanism to dynamically reload properties using a REST API.
 
 == Conclusion
 
