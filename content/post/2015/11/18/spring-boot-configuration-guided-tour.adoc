@@ -183,7 +183,9 @@ I found the name Spring Cloud a bit misleading because in this module you also f
 
 === Managing a configuration server
 
-For production it is recommended to use a Git server, but the demo project is configured to look for a property file in the default path.
+For production it is recommended to use a Git server, but the demo project is configured to look for a property file in the default path ```resources/config``` and we
+https://stackoverflow.com/questions/27131143/spring-cloud-configuration-server-not-working-with-local-properties-file[activate the native profile].
+
 
 Spring Cloud Config offers a mechanism to dynamically reload properties using a REST API
 
