@@ -8,7 +8,7 @@ buildDrafts:                false
 buildFuture:                false
 # enable this to make all relative URLs relative to content root. Note that this does not affect absolute URLs.
 relativeURLs:               false
-canonifyURLs:               false
+canonifyURLs:               true
 # config file (default is path/config.yaml|json|toml)
 config:                     "config.yml"
 contentdir:                 "content"
