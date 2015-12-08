@@ -1,7 +1,7 @@
 ---
 archetypedir:               "archetype"
 # hostname (and path) to the root eg. http://spf13.com/
-baseURL:                    "http://obourgeoispro.me/"
+baseURL:                    "http://obourgeois.me/"
 # include content marked as draft
 buildDrafts:                false
 # include content with publishdate in the future
@@ -88,7 +88,7 @@ params:
   highlight: "idea"
 
   # Google Analytics.
-  googleAnalytics: "Your Google Analytics tracking code"
+  googleAnalytics: "UA-71115937-1"
 
   # Sidebar social links.
   github: "obourgeoispro" # Your Github profile ID

@@ -13,19 +13,14 @@ id: spring-boot-configuration
 :icons: font
 :gradle: http://www.gradle.org[Gradle]
 
-In this post I will summarize everything I've learned using http://projects.spring.io/spring-boot/[Spring Boot] configuration system: there is
+In this post I will summarize the things I've learned using http://projects.spring.io/spring-boot/[Spring Boot] configuration system: there is
 excellent documentation on the Spring Boot website, but I found out that things are a bit scattered.
 
-== Getting started
+The example project is available on Github: https://github.com/obourgeoispro/spring-boot-configuration-demo
 
-=== Clone the demo project
+== The sample YAML configuration file
 
-I've created a Java based project with a Gradle build, the application properties are defined using YAML:
-https://github.com/obourgeoispro/spring-boot-configuration-demo
-
-=== The sample YAML configuration file
-
-Let's start with the configuration file as there are already a few things worth noting here:
+Let's start with having a look at the https://docs.spring.io/spring-boot/docs/current/reference/html/howto-properties-and-configuration.html#howto-use-yaml-for-external-properties[YAML configuration file]:
 
 [source,yaml]
 ----
@@ -48,13 +43,13 @@ spring:
       profile: native
       server:
         native:
-          search-locations: classpath:config/
+          search-locations: classpath:config/  <2>
 
----   <2>
+---   <3>
 
 configuration-app:
   api-url: http://dev.apiserver.internal
-  api-key: '{cipher}6b1f0b44cdc617e89f9cd0be0c28e369ac161794004d8330a572650d52de151a517a3400fdc0aba5c5b7e5e60732ff0f'
+  api-key: '{cipher}6b1f0b44cdc617e89f9cd0be0c28e369ac161794004d8330a572650d52de151a517a3400fdc0aba5c5b7e5e60732ff0f' <4>
   api-user: devuser
   connection-timeout: 1000
   use-ssl: true
@@ -65,18 +60,25 @@ spring:
     config:
       server:
         git:
-          uri: https://some-git-repo.com/configuration
+          uri: https://some-git-repo.com/configuration   <5>
 ----
 
-<1> We define a ```configuration-app``` namespace that is later used to bind properties to a bean.
-<2> A single YAML file can contain multiple configurations: this file contains also the ```development``` profile below this line.
+<1> We define the ```configuration-app``` namespace that is later used in ```ConfigurationProperties```.
+<2> The ```native``` profile of Spring Cloud Config is configured to use a local property file.
+<3> A single YAML file can contain multiple configurations: this file contains also the ```development``` profile below this line.
+<4> Properties can be encrypted using Spring Cloud.
+<5> On ```development``` profile, Spring Cloud Config is configured to look for a file on an online Git repository.
 
-== Injecting the configuration into Spring components
+[NOTE]
+https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-profiles.html[Spring Profiles] allows to
+separate part of the configuration and make it available only in a specific environment or context. In the demo project there
+are 2 profiles in the same YAML file, but they could also be in a separate file per profile.
 
-=== Using ```@Value()``` annotations
+== Using the configuration with Spring components
+=== With ```@Value()``` annotations
 
-You can use a new syntax inherited from Groovy (but that works with Java classes as well) that allows you to inject your
-configuration into class members like this:
+You can use a new syntax inherited from Groovy (works for Java classes as well) that allows you to inject your
+configuration into class members by annotating members:
 
 [source,java]
 ----
@@ -94,10 +96,10 @@ public class MyBean {
 ----
 <1> New "Groovy like" syntax.
 
-=== Using type safe configuration properties
+=== With type safe configuration properties
 
 But I preferred to use the new strongly typed configuration that can automatically bind the properties to a POJO.
-Here is the Bean is used in the demo project:
+Here is the Bean that is used in the demo project and that's bound to the YAML file we've seen before:
 
 [source,java]
 ----
@@ -124,36 +126,36 @@ public class SpringBootPropertiesApplicationSettings {
     private int connectionTimeout;
     private boolean useSSL;
 ----
-<1> we can tell Spring that we are interested only in the properties from the namespace ```configuration-app```
-<2> In YAML we are using ```api-url```, but the Java bean is using ```apiUrl```, following Java conventions. This is called relaxed binding.
-<3> We can use standard annotations to enforce validation of properties.
+<1> We define a configuration Bean that is configured to be bound to properties from the namespace ```configuration-app```
+<2> In YAML we are using ```api-url```, but the Bean is using ```apiUrl```, following Java conventions. This is called relaxed binding.
+<3> Standard JSR-303 annotations can be used to validate properties.
 
 [NOTE]
 .Relaxed binding
 =================================================================================
 http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html#boot-features-external-config-relaxed-binding[Relaxed binding]
-works also for uppercase, lowercase and underscore: APIURL, API-URL, api_url are all resolved to the same property.
+is used to try different combinations of uppercase, lowercase and underscore. For instance APIURL, API-URL, api_url are all resolved to the same Java property apiUrl.
 =================================================================================
 
 === Error reporting and validation
 
-Shall you make a mistake in your configuration file, Spring will fail fast and print an informative error message:
+Shall you make a mistake in your configuration file, Spring will fail fast and print an error message:
 [source,java]
 ----
 Caused by: org.springframework.validation.BindException: org.springframework.validation.BeanPropertyBindingResult: 2 errors
 Field error in object 'configuration-app' on field 'apiUrl': rejected value [http//localhost:8080/api]; codes [typeMismatch.configuration-app.apiUrl,typeMismatch.apiUrl,typeMismatch.java.net.URL,typeMismatch]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [configuration-app.apiUrl,apiUrl]; arguments []; default message [apiUrl]]; default message [Failed to convert property value of type 'java.lang.String' to required type 'java.net.URL' for property 'apiUrl'; nested exception is org.springframework.core.convert.ConverterNotFoundException: No converter found capable of converting from type java.lang.String to type @javax.validation.constraints.NotNull java.net.URL] <1>
 Field error in object 'configuration-app' on field 'connectionTimeout': rejected value [blah]; codes [typeMismatch.configuration-app.connectionTimeout,typeMismatch.connectionTimeout,typeMismatch.int,typeMismatch]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [configuration-app.connectionTimeout,connectionTimeout]; arguments []; default message [connectionTimeout]]; default message [Failed to convert property value of type 'java.lang.String' to required type 'int' for property 'connectionTimeout'; nested exception is org.springframework.core.convert.ConverterNotFoundException: No converter found capable of converting from type java.lang.String to type @javax.validation.constraints.Digits int] <2>
 ----
-<1> Informs that ```http//localhost:8080/api``` is not a valid URL and cannot be converted to java.net.URL
-<2> Tells us that this field expects digits only and not a String
+<1> Informs that ```http//localhost:8080/api``` is not a valid URL and cannot be converted to java.net.URL.
+<2> Tells us that this field expects digits only.
 
 If you want to go further with validation of properties, you can also create your own https://github.com/spring-projects/spring-boot/tree/master/spring-boot-samples/spring-boot-sample-property-validation[Custom validators]
 and of course replace the default messages with custom - translated - messages.
 
-=== Generating configuration meta-data
+=== Generate configuration meta-data for documentation and completion in IDE
 
-Spring Boot provides an annotation processor that can scan your configuration Beans and generate JSON documentation.
-http://docs.spring.io/spring-boot/docs/1.2.5.RELEASE/reference/html/configuration-metadata.html#configuration-metadata-annotation-processor[see Spring boot annotation processor setup]
+Spring Boot provides an annotation processor that can scan your configuration Beans and generate JSON documentation: see
+http://docs.spring.io/spring-boot/docs/1.2.5.RELEASE/reference/html/configuration-metadata.html#configuration-metadata-annotation-processor[Spring boot annotation processor setup]
 
 This JSON documentation is then used by your IDE to offer completion and validation of properties:
 
@@ -162,33 +164,25 @@ This is also working with the relaxed binding!
 
 image::../relaxed-binding-validation.PNG[Relaxed binding validation, title="Relaxed binding validation"]
 
-== Using Spring profiles
+== Use Spring Cloud Config
 
-Spring profiles allows you to manage configuration specific to an environment or context: in the demo project there are 2 profiles in the same YAML file.
-You can also have one file per profile.
+=== Encrypt sensitive properties
 
+In Spring Cloud Config you also find a feature to encrypt and decrypt properties. You can use symmetric encryption with a key configured in the ```bootstrap.yml``` file,
+or, more realistically, you'll want to use the system property ```ENCRYPT_KEY``` or a parameter on the command line to keep the encryption key secret. There is also
+the possibility to use http://cloud.spring.io/spring-cloud-config/spring-cloud-config.html#_key_management[asymmetric keys] after configuring a keystore.
 
-== Spring Cloud Config
-
-=== Encrypting sensitive properties
-
-I found the name Spring Cloud a bit misleading because in this module you also find features to encrypt properties.
 To encrypt your properties, you can use the command line with http://cloud.spring.io/spring-cloud-cli/[Spring Cloud CLI] or use the
-REST endpoint ```/encrypt```.
+REST endpoint ```http://localhost:8080/encrypt``` and POST the properties to encrypt.
 
-You can use symmetric encryption with a key configured in the ```bootstrap.yml``` file, or, more realistically,
-you'll want to use the system property ```ENCRYPT_KEY``` or a parameter on the command line to set up the encryption key.
-
-There is also the possibility to use http://cloud.spring.io/spring-cloud-config/spring-cloud-config.html#_key_management[asymmetric keys].
-
-[NOTE]
+[CAUTION]
 .Exception due to "illegal key size"
-You'll probably get this exception if you are using the SUN JDK, the README explains
+You'll probably get this exception if you are using the SUN JDK, and the project README explains
 https://github.com/spring-cloud/spring-cloud-commons[how to install the Java Cryptographic Extension]
 
-=== Managing a configuration server
+=== Manage the Cloud configuration server
 
-For production it is recommended to use a Git server, but the demo project is configured to look for a property file in the default path ```resources/config``` and we
+For production it is recommended to use a Git server, but the demo project is configured to look for a property file in the default path ```resources/config``` as we
 https://stackoverflow.com/questions/27131143/spring-cloud-configuration-server-not-working-with-local-properties-file[activate the native profile].
 
 Spring Cloud Config offers a mechanism to dynamically reload properties using a REST API.
@@ -196,7 +190,5 @@ Spring Cloud Config offers a mechanism to dynamically reload properties using a 
 == Conclusion
 
 Spring, as an enterprise framework, always had excellent support for application configuration, and when working with Spring
-Boot I was glad to see that this support is even better now.
-
-It seems to me that configuration and logging are often overlooked topics because they seem to be a mundane task.
+Boot I was glad to see that this support is even better now. It seems to me that configuration and logging are often overlooked topics as they seem to be a mundane task.
 I believe it is important to have solid logging and application configuration as that can save a lot of money to your company.
