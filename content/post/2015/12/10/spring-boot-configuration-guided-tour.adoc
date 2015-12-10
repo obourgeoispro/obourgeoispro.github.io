@@ -2,7 +2,7 @@
 title: "Spring Boot Configuration guided tour"
 description: "Spring Boot Configuration guided tour description"
 tags: [ "Spring Boot", "Configuration", "Java", "YAML" ]
-date: "2015-12-07"
+date: "2015-12-10"
 categories:
   - "Development"
   - "Java"
@@ -16,11 +16,12 @@ id: spring-boot-configuration
 In this post I will summarize the things I've learned using http://projects.spring.io/spring-boot/[Spring Boot] configuration system: there is
 excellent documentation on the Spring Boot website, but I found out that things are a bit scattered.
 
-The example project is available on Github: https://github.com/obourgeoispro/spring-boot-configuration-demo
+The example project is available on Github: https://github.com/obourgeoispro/spring-boot-configuration-demo and it shows briefly what are the possibilities offered for configuration.
 
-== The sample YAML configuration file
+== First, the configuration file
 
-Let's start with having a look at the https://docs.spring.io/spring-boot/docs/current/reference/html/howto-properties-and-configuration.html#howto-use-yaml-for-external-properties[YAML configuration file]:
+You can use good old properties, but Spring Boot also support https://docs.spring.io/spring-boot/docs/current/reference/html/howto-properties-and-configuration.html#howto-use-yaml-for-external-properties[YAML configuration file]
+as soon as you have SnakeYAML on the classpath. This happens if you import on of the starters such as ```spring-cloud-starter-config``` in this project, along with the bean validation API and crypto API.
 
 [source,yaml]
 ----
@@ -67,18 +68,18 @@ spring:
 <2> The ```native``` profile of Spring Cloud Config is configured to use a local property file.
 <3> A single YAML file can contain multiple configurations: this file contains also the ```development``` profile below this line.
 <4> Properties can be encrypted using Spring Cloud.
-<5> On ```development``` profile, Spring Cloud Config is configured to look for a file on an online Git repository.
+<5> On ```development``` profile, Spring Cloud Config is configured to look for a file in an online Git repository.
 
 [NOTE]
 https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-profiles.html[Spring Profiles] allows to
 separate part of the configuration and make it available only in a specific environment or context. In the demo project there
 are 2 profiles in the same YAML file, but they could also be in a separate file per profile.
 
-== Using the configuration with Spring components
-=== With ```@Value()``` annotations
+== Use the configuration with Spring components
+=== The new ```@Value()``` annotations
 
-You can use a new syntax inherited from Groovy (works for Java classes as well) that allows you to inject your
-configuration into class members by annotating members:
+You can use a new syntax inherited from Groovy (which works for Java classes as well) that allows you to inject your
+configuration into class members using annotations:
 
 [source,java]
 ----
@@ -96,10 +97,12 @@ public class MyBean {
 ----
 <1> New "Groovy like" syntax.
 
-=== With type safe configuration properties
+This is practical and quick, but is clearly tedious and cumbersome for anything substantial.
 
-But I preferred to use the new strongly typed configuration that can automatically bind the properties to a POJO.
-Here is the Bean that is used in the demo project and that's bound to the YAML file we've seen before:
+=== Type-safe configuration properties
+
+So I preferred to use the new strongly typed configuration that can automatically bind the properties to a POJO"this avoid the use of
+fragile String references. Here is the Bean that is used in the demo project and that is bound to the YAML file we've seen before:
 
 [source,java]
 ----
@@ -126,20 +129,21 @@ public class SpringBootPropertiesApplicationSettings {
     private int connectionTimeout;
     private boolean useSSL;
 ----
-<1> We define a configuration Bean that is configured to be bound to properties from the namespace ```configuration-app```
-<2> In YAML we are using ```api-url```, but the Bean is using ```apiUrl```, following Java conventions. This is called relaxed binding.
-<3> Standard JSR-303 annotations can be used to validate properties.
+<1> We define a configuration Bean that is configured to be bound to the properties under the namespace ```configuration-app```
+<2> In YAML we are using ```api-url```, but the Bean is using ```apiUrl```, following Java conventions. This is called relaxed binding, and it just works.
+<3> Standard JSR-303 annotations can be used to validate the properties.
 
 [NOTE]
 .Relaxed binding
 =================================================================================
 http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html#boot-features-external-config-relaxed-binding[Relaxed binding]
-is used to try different combinations of uppercase, lowercase and underscore. For instance APIURL, API-URL, api_url are all resolved to the same Java property apiUrl.
+is used to try different combinations of uppercase, lowercase and underscore. For instance APIURL, API-URL, api_url are all resolved to the same Java property apiUrl with setter ```setApiUrl```
 =================================================================================
 
-=== Error reporting and validation
+== Validate and avoid typos
+=== Type-safe configuration and JSR-303 validation
 
-Shall you make a mistake in your configuration file, Spring will fail fast and print an error message:
+If you are using type-safe configuration and JSR-303 annotations, shall your configuration file contain a typo or mistake, Spring will fail fast and print an error message.
 [source,java]
 ----
 Caused by: org.springframework.validation.BindException: org.springframework.validation.BeanPropertyBindingResult: 2 errors
@@ -147,28 +151,30 @@ Field error in object 'configuration-app' on field 'apiUrl': rejected value [htt
 Field error in object 'configuration-app' on field 'connectionTimeout': rejected value [blah]; codes [typeMismatch.configuration-app.connectionTimeout,typeMismatch.connectionTimeout,typeMismatch.int,typeMismatch]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [configuration-app.connectionTimeout,connectionTimeout]; arguments []; default message [connectionTimeout]]; default message [Failed to convert property value of type 'java.lang.String' to required type 'int' for property 'connectionTimeout'; nested exception is org.springframework.core.convert.ConverterNotFoundException: No converter found capable of converting from type java.lang.String to type @javax.validation.constraints.Digits int] <2>
 ----
 <1> Informs that ```http//localhost:8080/api``` is not a valid URL and cannot be converted to java.net.URL.
-<2> Tells us that this field expects digits only.
+<2> This field expects digits only and we provided a String as configuration.
 
 If you want to go further with validation of properties, you can also create your own https://github.com/spring-projects/spring-boot/tree/master/spring-boot-samples/spring-boot-sample-property-validation[Custom validators]
-and of course replace the default messages with custom - translated - messages.
+and of course replace the default messages with custom (translated) messages.
 
-=== Generate configuration meta-data for documentation and completion in IDE
+=== Generate configuration meta-data for documentation and avoid typos in IDE
 
-Spring Boot provides an annotation processor that can scan your configuration Beans and generate JSON documentation: see
+Spring Boot provides an annotation processor that can scan your configuration Beans and generate JSON documentation from the JavaDoc: see
 http://docs.spring.io/spring-boot/docs/1.2.5.RELEASE/reference/html/configuration-metadata.html#configuration-metadata-annotation-processor[Spring boot annotation processor setup]
 
-This JSON documentation is then used by your IDE to offer completion and validation of properties:
+This JSON documentation is then used by your IDE to offer completion and validation of properties on the fly: this works with Eclipse, Netbean and IntelliJ.
 
 image::../custom-props-completion.PNG[Custom properties completion, title="Custom properties completion"]
 This is also working with the relaxed binding!
 
 image::../relaxed-binding-validation.PNG[Relaxed binding validation, title="Relaxed binding validation"]
 
-== Use Spring Cloud Config
+== Spring Cloud Config
+
+http://cloud.spring.io/spring-cloud-config/[Spring Cloud Config] is an extra module that provides server and client-side support for externalized configuration in a distributed system.
 
 === Encrypt sensitive properties
 
-In Spring Cloud Config you also find a feature to encrypt and decrypt properties. You can use symmetric encryption with a key configured in the ```bootstrap.yml``` file,
+In Spring Cloud Config you'll also find a feature to encrypt and decrypt sensitive properties. You can use symmetric encryption with a key configured in the ```bootstrap.yml``` file,
 or, more realistically, you'll want to use the system property ```ENCRYPT_KEY``` or a parameter on the command line to keep the encryption key secret. There is also
 the possibility to use http://cloud.spring.io/spring-cloud-config/spring-cloud-config.html#_key_management[asymmetric keys] after configuring a keystore.
 
@@ -178,17 +184,57 @@ REST endpoint ```http://localhost:8080/encrypt``` and POST the properties to enc
 [CAUTION]
 .Exception due to "illegal key size"
 You'll probably get this exception if you are using the SUN JDK, and the project README explains
-https://github.com/spring-cloud/spring-cloud-commons[how to install the Java Cryptographic Extension]
+https://github.com/spring-cloud/spring-cloud-commons[how to install the Java Cryptographic Extension] in your Java runtime.
 
 === Manage the Cloud configuration server
 
-For production it is recommended to use a Git server, but the demo project is configured to look for a property file in the default path ```resources/config``` as we
-https://stackoverflow.com/questions/27131143/spring-cloud-configuration-server-not-working-with-local-properties-file[activate the native profile].
+When your system grows, you usually want to streamline the deployment of new configuration and keep track of configuration changes: this can be done by storing the configuration files in source
+control and deploy them using Spring Cloud Configuration server. For production it is recommended to use a Git server, but the demo project is configured to look for a property file in the default path ```resources/config``` and
+https://stackoverflow.com/questions/27131143/spring-cloud-configuration-server-not-working-with-local-properties-file[activates the native profile].
 
-Spring Cloud Config offers a mechanism to dynamically reload properties using a REST API.
+Spring Cloud Config also offers a mechanism to http://cloud.spring.io/spring-cloud-config/spring-cloud-config.html#_push_notifications_and_spring_cloud_bus[dynamically reload the properties using a webhook] so you can trigger the reload on new commit in Github for instance.
+
+=== A few management URLs
+
+Here are some interesting URLs for checking and managing properties:
+
+[cols="3*"]
+|===
+| Pattern
+| Example
+| Description
+
+|{host}:{port}/configprops
+|http://localhost:8080/configprops
+|A collated list of all ```@ConfigurationProperties```
+
+|{host}:{port}/{application}/{profile}
+|http://localhost:8080/demo/default
+|Properties for a specific profile
+
+|
+|http://localhost:8080/env
+|Properties from ```ConfigurableEnvironment```
+|===
+
+== Going further
+
+We've already seen a few tricks, but that was just to whet your appetite: there is much more to discover if you read the documentation. There are also a few good reads
+ I recommend that will help you to structure and rationalize the usage of configuration in your application.
+
+* First and foremost, the reference for Spring Boot externalized configuration
+** https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html
+* _The twelve factor app_ : a well known methodology and list of guidelines on how to develop applications with deployment in mind. The point III focuses on configuration (but of course
+ the whole document is worth reading)
+** http://12factor.net/
+** http://12factor.net/config
+* _"Configuring It All Out" or "12-Factor App-Style Configuration with Spring"_ : explains how to apply the 12 factor principles with Spring Boot. This covers Spring Cloud Configuration
+and explains how to refresh the configuration using the Spring Cloud Bus.
+** https://spring.io/blog/2015/01/13/configuring-it-all-out-or-12-factor-app-style-configuration-with-spring
+* _Binding to Data Services with Spring Boot in Cloud Foundry_ : explains how to bind services to a Spring Boot application following the 12 factor guidelines and auto-configuration feature.
+** https://spring.io/blog/2015/04/27/binding-to-data-services-with-spring-boot-in-cloud-foundry
 
 == Conclusion
 
-Spring, as an enterprise framework, always had excellent support for application configuration, and when working with Spring
-Boot I was glad to see that this support is even better now. It seems to me that configuration and logging are often overlooked topics as they seem to be a mundane task.
-I believe it is important to have solid logging and application configuration as that can save a lot of money to your company.
+Spring, as an enterprise framework, always had excellent support for application configuration, and when working with Spring Boot I was glad to see that this support is even better now.
+It seems to me that configuration and logging are often overlooked topics as they seem to be a mundane task, however, experience shows that to have well thought logging and application configuration can save a lot of money (e.g. time) to your company.

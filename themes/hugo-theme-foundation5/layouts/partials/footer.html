@@ -20,11 +20,11 @@
         <script type="application/javascript" src="//cdnjs.cloudflare.com/ajax/libs/placeholders/4.0.1/placeholders.min.js"></script>
         <script type="application/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js"></script>
         <script type="application/javascript" src="//cdnjs.cloudflare.com/ajax/libs/foundation/5.5.3/js/foundation.min.js"></script>
-        <script type="application/javascript" src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/highlight.min.js"></script>
-        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/styles/{{ .Site.Params.highlight }}.min.css">
+        <script type="application/javascript" src="{{.Site.BaseURL}}js/vendor/highlight.pack.js"></script>
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.0.0/styles/{{ .Site.Params.highlight }}.min.css">
 
         <script>
-            hljs.initHighlighting();
+            hljs.initHighlightingOnLoad();
             $(document).foundation();
         </script>
 
