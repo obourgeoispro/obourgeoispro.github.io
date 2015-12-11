@@ -1,0 +1,610 @@
+
+<!DOCTYPE html>
+<html lang="en-EN">
+
+    <head>
+
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+        <meta name="generator" content="Hugo 0.14" />
+        <meta property="og:title" content=" Spring Boot Configuration guided tour &middot;  Olivier&#39;s blog" />
+        <meta property="og:site_name" content="Olivier&#39;s blog" />
+        <meta property="og:url" content="http://localhost:1313/post/2015/12/10/spring-boot-configuration-guided-tour/" />
+
+    
+        <meta property="og:type" content="article" />
+        <meta property="og:article:published_time" content="2015-12-10T00:00:00Z" />
+        <meta property="og:article:tag" content="Spring Boot" />
+        <meta property="og:article:tag" content="Configuration" />
+        <meta property="og:article:tag" content="Java" />
+        <meta property="og:article:tag" content="YAML" />
+        
+
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:site" content="@OlivierZentak" />
+        <meta name="twitter:creator" content="@OlivierZentak" />
+        <meta name="twitter:title" content="Spring Boot Configuration guided tour" />
+        <meta name="twitter:description" content="Spring Boot Configuration guided tour description" />
+        <meta name="twitter:url" content="http://localhost:1313/post/2015/12/10/spring-boot-configuration-guided-tour/" />
+    
+
+        <title> Spring Boot Configuration guided tour &middot;  Olivier&#39;s blog</title>
+
+    
+        <meta name="description" content="Spring Boot Configuration guided tour description" />
+    
+        
+        <meta name="p:domain_verify" content="fc173d84e3a4de948ed4bda2908afd3e"/>
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
+
+    
+        <link href="http://localhost:1313/index.xml" rel="alternate" type="application/rss+xml" title="Olivier&#39;s blog" />
+    
+
+    
+        <link rel="canonical" href="http://localhost:1313/post/2015/12/10/spring-boot-configuration-guided-tour/" />
+
+    
+    <script type="application/ld+json">
+    { 
+        "@context": "http://schema.org",
+        "@type": "Article",
+        "headline": "Spring Boot Configuration guided tour",
+        "author": {
+            "@type": "Person",
+            "name": "https://profiles.google.com/103338573272726333134?rel=author"
+        },
+        "datePublished": "2015-12-10",
+        "description": "Spring Boot Configuration guided tour description",
+        "wordCount":  1374 
+    }
+    </script>
+    
+
+    </head>
+    <body>
+        <header id="header">
+            <div class="contain-to-grid sticky">
+    <nav class="top-bar" data-topbar role="navigation">
+        <ul class="title-area">
+            <li class="name"><h1><a href="http://localhost:1313/">Olivier&#39;s blog</a></h1></li>
+        </ul>
+        <section class="top-bar-section">
+            <ul class="right">
+                
+<li><a href="http://twitter.com/OlivierZentak" rel="me">Twitter</a></li>
+
+
+<li><a href="http://linkedin.com/in/obourgeois" rel="me">LinkedIn</a></li>
+
+
+<li><a href="http://github.com/obourgeoispro" rel="me">Github</a></li>
+
+<li><a href="http://localhost:1313/index.xml" rel="me">RSS Feed</a></li>
+
+            </ul>
+        </section>
+    </nav>
+</div>
+        </header>
+<div class="row">
+    <div class="large-9 columns" role="content" id="content">
+        <article  id="spring-boot-configuration" >
+            <h3><a href="http://localhost:1313/post/2015/12/10/spring-boot-configuration-guided-tour/">Spring Boot Configuration guided tour</a></h3>
+            <h6>
+                <time datetime="2015-12-10T00:00:00Z">
+                10 Dec 2015
+                </time>
+                
+  &middot; Reading time 7 minutes (1374 words)
+
+
+
+            </h6>
+            
+                
+					<a href="http://localhost:1313/tags/spring-boot/"><span class="label">Spring Boot</span></a>
+				
+					<a href="http://localhost:1313/tags/configuration/"><span class="label">Configuration</span></a>
+				
+					<a href="http://localhost:1313/tags/java/"><span class="label">Java</span></a>
+				
+					<a href="http://localhost:1313/tags/yaml/"><span class="label">YAML</span></a>
+				
+            
+
+            <div id="header">
+</div>
+<div id="content">
+<div class="paragraph">
+<p>In this post I will summarize the things I&#8217;ve learned using <a href="http://projects.spring.io/spring-boot/">Spring Boot</a> configuration system: there is
+excellent documentation on the Spring Boot website, but I found out that things are a bit scattered.</p>
+</div>
+<div class="paragraph">
+<p>The example project is available on Github: <a href="https://github.com/obourgeoispro/spring-boot-configuration-demo" class="bare">https://github.com/obourgeoispro/spring-boot-configuration-demo</a> and it shows briefly what are the possibilities offered for configuration.</p>
+</div>
+<div class="sect1">
+<h2 id="_first_the_configuration_file">First, the configuration file</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can use good old properties, but Spring Boot also support <a href="https://docs.spring.io/spring-boot/docs/current/reference/html/howto-properties-and-configuration.html#howto-use-yaml-for-external-properties">YAML configuration file</a>
+as soon as you have SnakeYAML on the classpath. This happens if you import on of the starters such as <code><code>spring-cloud-starter-config</code></code> in this project, along with the bean validation API and crypto API.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">configuration-app: <i class="conum" data-value="1"></i><b>(1)</b>
+  api-url: http://localhost:8080/api
+  api-key: '{cipher}da1013c5bc07e9bb8de82d082f72504f6852316080afeb89b46b7f54fcd320ab'
+  api-user: testuser
+  connection-timeout: 1000
+  use-ssl: false
+
+spring:
+  application:
+    name: demo
+  profiles:
+    include: native, local
+    active: native, local
+  cloud:
+    config:
+      profile: native
+      server:
+        native:
+          search-locations: classpath:config/  <i class="conum" data-value="2"></i><b>(2)</b>
+
+---   <i class="conum" data-value="3"></i><b>(3)</b>
+
+configuration-app:
+  api-url: http://dev.apiserver.internal
+  api-key: '{cipher}6b1f0b44cdc617e89f9cd0be0c28e369ac161794004d8330a572650d52de151a517a3400fdc0aba5c5b7e5e60732ff0f' <i class="conum" data-value="4"></i><b>(4)</b>
+  api-user: devuser
+  connection-timeout: 1000
+  use-ssl: true
+
+spring:
+  profiles: development
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://some-git-repo.com/configuration   <i class="conum" data-value="5"></i><b>(5)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>We define the <code><code>configuration-app</code></code> namespace that is later used in <code><code>ConfigurationProperties</code></code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The <code><code>native</code></code> profile of Spring Cloud Config is configured to use a local property file.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>A single YAML file can contain multiple configurations: this file contains also the <code><code>development</code></code> profile below this line.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Properties can be encrypted using Spring Cloud.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>On <code><code>development</code></code> profile, Spring Cloud Config is configured to look for a file in an online Git repository.</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<a href="https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-profiles.html">Spring Profiles</a> allows to
+separate part of the configuration and make it available only in a specific environment or context. In the demo project there
+are 2 profiles in the same YAML file, but they could also be in a separate file per profile.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_use_the_configuration_with_spring_components">Use the configuration with Spring components</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_the_new_code_code_value_code_code_annotations">The new <code><code>@Value()</code></code> annotations</h3>
+<div class="paragraph">
+<p>You can use a new syntax inherited from Groovy (which works for Java classes as well) that allows you to inject your
+configuration into class members using annotations:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">import org.springframework.stereotype.*
+import org.springframework.beans.factory.annotation.*
+
+@Component
+public class MyBean {
+
+    @Value("${api-url}") <i class="conum" data-value="1"></i><b>(1)</b>
+    private String apiUrl;
+
+    // ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>New "Groovy like" syntax.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>This is practical and quick, but is clearly tedious and cumbersome for anything substantial.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_type_safe_configuration_properties">Type-safe configuration properties</h3>
+<div class="paragraph">
+<p>So I preferred to use the new strongly typed configuration that can automatically bind the properties to a POJO"this avoid the use of
+fragile String references. Here is the Bean that is used in the demo project and that is bound to the YAML file we&#8217;ve seen before:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">package demo;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
+
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.NotNull;
+import java.net.URL;
+
+@Component
+@ConfigurationProperties(prefix = "configuration-app")   <i class="conum" data-value="1"></i><b>(1)</b>
+public class SpringBootPropertiesApplicationSettings {
+
+    @NotNull
+    private URL apiUrl;        <i class="conum" data-value="2"></i><b>(2)</b>
+    @NotNull
+    private String apiKey;
+    @NotNull
+    private String apiUser;
+    @Digits(integer = 12, fraction = 0)    <i class="conum" data-value="3"></i><b>(3)</b>
+    private int connectionTimeout;
+    private boolean useSSL;</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>We define a configuration Bean that is configured to be bound to the properties under the namespace <code><code>configuration-app</code></code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>In YAML we are using <code><code>api-url</code></code>, but the Bean is using <code><code>apiUrl</code></code>, following Java conventions. This is called relaxed binding, and it just works.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Standard JSR-303 annotations can be used to validate the properties.</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Relaxed binding</div>
+<div class="paragraph">
+<p><a href="http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html#boot-features-external-config-relaxed-binding">Relaxed binding</a>
+is used to try different combinations of uppercase, lowercase and underscore. For instance APIURL, API-URL, api_url are all resolved to the same Java property apiUrl with setter <code><code>setApiUrl</code></code></p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_validate_and_avoid_typos">Validate and avoid typos</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_type_safe_configuration_and_jsr_303_validation">Type-safe configuration and JSR-303 validation</h3>
+<div class="paragraph">
+<p>If you are using type-safe configuration and JSR-303 annotations, shall your configuration file contain a typo or mistake, Spring will fail fast and print an error message.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">Caused by: org.springframework.validation.BindException: org.springframework.validation.BeanPropertyBindingResult: 2 errors
+Field error in object 'configuration-app' on field 'apiUrl': rejected value [http//localhost:8080/api]; codes [typeMismatch.configuration-app.apiUrl,typeMismatch.apiUrl,typeMismatch.java.net.URL,typeMismatch]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [configuration-app.apiUrl,apiUrl]; arguments []; default message [apiUrl]]; default message [Failed to convert property value of type 'java.lang.String' to required type 'java.net.URL' for property 'apiUrl'; nested exception is org.springframework.core.convert.ConverterNotFoundException: No converter found capable of converting from type java.lang.String to type @javax.validation.constraints.NotNull java.net.URL] <i class="conum" data-value="1"></i><b>(1)</b>
+Field error in object 'configuration-app' on field 'connectionTimeout': rejected value [blah]; codes [typeMismatch.configuration-app.connectionTimeout,typeMismatch.connectionTimeout,typeMismatch.int,typeMismatch]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [configuration-app.connectionTimeout,connectionTimeout]; arguments []; default message [connectionTimeout]]; default message [Failed to convert property value of type 'java.lang.String' to required type 'int' for property 'connectionTimeout'; nested exception is org.springframework.core.convert.ConverterNotFoundException: No converter found capable of converting from type java.lang.String to type @javax.validation.constraints.Digits int] <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Informs that <code><code>http//localhost:8080/api</code></code> is not a valid URL and cannot be converted to java.net.URL.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>This field expects digits only and we provided a String as configuration.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>If you want to go further with validation of properties, you can also create your own <a href="https://github.com/spring-projects/spring-boot/tree/master/spring-boot-samples/spring-boot-sample-property-validation">Custom validators</a>
+and of course replace the default messages with custom (translated) messages.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_generate_configuration_meta_data_for_documentation_and_avoid_typos_in_ide">Generate configuration meta-data for documentation and avoid typos in IDE</h3>
+<div class="paragraph">
+<p>Spring Boot provides an annotation processor that can scan your configuration Beans and generate JSON documentation from the JavaDoc: see
+<a href="http://docs.spring.io/spring-boot/docs/1.2.5.RELEASE/reference/html/configuration-metadata.html#configuration-metadata-annotation-processor">Spring boot annotation processor setup</a></p>
+</div>
+<div class="paragraph">
+<p>This JSON documentation is then used by your IDE to offer completion and validation of properties on the fly: this works with Eclipse, Netbean and IntelliJ.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../custom-props-completion.PNG" alt="Custom properties completion">
+</div>
+<div class="title">Figure 1. Custom properties completion</div>
+</div>
+<div class="paragraph">
+<p>This is also working with the relaxed binding!</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../relaxed-binding-validation.PNG" alt="Relaxed binding validation">
+</div>
+<div class="title">Figure 2. Relaxed binding validation</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_spring_cloud_config">Spring Cloud Config</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><a href="http://cloud.spring.io/spring-cloud-config/">Spring Cloud Config</a> is an extra module that provides server and client-side support for externalized configuration in a distributed system.</p>
+</div>
+<div class="sect2">
+<h3 id="_encrypt_sensitive_properties">Encrypt sensitive properties</h3>
+<div class="paragraph">
+<p>In Spring Cloud Config you&#8217;ll also find a feature to encrypt and decrypt sensitive properties. You can use symmetric encryption with a key configured in the <code><code>bootstrap.yml</code></code> file,
+or, more realistically, you&#8217;ll want to use the system property <code><code>ENCRYPT_KEY</code></code> or a parameter on the command line to keep the encryption key secret. There is also
+the possibility to use <a href="http://cloud.spring.io/spring-cloud-config/spring-cloud-config.html#_key_management">asymmetric keys</a> after configuring a keystore.</p>
+</div>
+<div class="paragraph">
+<p>To encrypt your properties, you can use the command line with <a href="http://cloud.spring.io/spring-cloud-cli/">Spring Cloud CLI</a> or use the
+REST endpoint <code><code><a href="http://localhost:8080/encrypt" class="bare">http://localhost:8080/encrypt</a></code></code> and POST the properties to encrypt.</p>
+</div>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-caution" title="Caution"></i>
+</td>
+<td class="content">
+<div class="title">Exception due to "illegal key size"</div>
+You&#8217;ll probably get this exception if you are using the SUN JDK, and the project README explains
+<a href="https://github.com/spring-cloud/spring-cloud-commons">how to install the Java Cryptographic Extension</a> in your Java runtime.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_manage_the_cloud_configuration_server">Manage the Cloud configuration server</h3>
+<div class="paragraph">
+<p>When your system grows, you usually want to streamline the deployment of new configuration and keep track of configuration changes: this can be done by storing the configuration files in source
+control and deploy them using Spring Cloud Configuration server. For production it is recommended to use a Git server, but the demo project is configured to look for a property file in the default path <code><code>resources/config</code></code> and
+<a href="https://stackoverflow.com/questions/27131143/spring-cloud-configuration-server-not-working-with-local-properties-file">activates the native profile</a>.</p>
+</div>
+<div class="paragraph">
+<p>Spring Cloud Config also offers a mechanism to <a href="http://cloud.spring.io/spring-cloud-config/spring-cloud-config.html#_push_notifications_and_spring_cloud_bus">dynamically reload the properties using a webhook</a> so you can trigger the reload on new commit in Github for instance.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_a_few_management_urls">A few management URLs</h3>
+<div class="paragraph">
+<p>Here are some interesting URLs for checking and managing properties:</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 33%;">
+<col style="width: 33%;">
+<col style="width: 33%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Pattern</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Example</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Description</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">{host}:{port}/configprops</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://localhost:8080/configprops" class="bare">http://localhost:8080/configprops</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A collated list of all <code><code>@ConfigurationProperties</code></code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">{host}:{port}/{application}/{profile}</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://localhost:8080/demo/default" class="bare">http://localhost:8080/demo/default</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Properties for a specific profile</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://localhost:8080/env" class="bare">http://localhost:8080/env</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Properties from <code><code>ConfigurableEnvironment</code></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_going_further">Going further</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>We&#8217;ve already seen a few tricks, but that was just to whet your appetite: there is much more to discover if you read the documentation. There are also a few good reads
+ I recommend that will help you to structure and rationalize the usage of configuration in your application.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>First and foremost, the reference for Spring Boot externalized configuration</p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html" class="bare">https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html</a></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><em>The twelve factor app</em> : a well known methodology and list of guidelines on how to develop applications with deployment in mind. The point III focuses on configuration (but of course
+the whole document is worth reading)</p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="http://12factor.net/" class="bare">http://12factor.net/</a></p>
+</li>
+<li>
+<p><a href="http://12factor.net/config" class="bare">http://12factor.net/config</a></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><em>"Configuring It All Out" or "12-Factor App-Style Configuration with Spring"</em> : explains how to apply the 12 factor principles with Spring Boot. This covers Spring Cloud Configuration
+and explains how to refresh the configuration using the Spring Cloud Bus.</p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://spring.io/blog/2015/01/13/configuring-it-all-out-or-12-factor-app-style-configuration-with-spring" class="bare">https://spring.io/blog/2015/01/13/configuring-it-all-out-or-12-factor-app-style-configuration-with-spring</a></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><em>Binding to Data Services with Spring Boot in Cloud Foundry</em> : explains how to bind services to a Spring Boot application following the 12 factor guidelines and auto-configuration feature.</p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://spring.io/blog/2015/04/27/binding-to-data-services-with-spring-boot-in-cloud-foundry" class="bare">https://spring.io/blog/2015/04/27/binding-to-data-services-with-spring-boot-in-cloud-foundry</a></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_conclusion">Conclusion</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Spring, as an enterprise framework, always had excellent support for application configuration, and when working with Spring Boot I was glad to see that this support is even better now.
+It seems to me that configuration and logging are often overlooked topics as they seem to be a mundane task, however, experience shows that to have well thought logging and application configuration can save a lot of money (e.g. time) to your company.</p>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2015-12-11 12:00:52 W. Europe Standard Time
+</div>
+</div>
+            <div id="share-buttons">
+    <ul class="inline-list center">
+        <a href="https://twitter.com/intent/tweet?source=http%3a%2f%2flocalhost%3a1313%2fpost%2f2015%2f12%2f10%2fspring-boot-configuration-guided-tour%2f&text=Spring%20Boot%20Configuration%20guided%20tour:http%3a%2f%2flocalhost%3a1313%2fpost%2f2015%2f12%2f10%2fspring-boot-configuration-guided-tour%2f&via=OlivierZentak" target="_blank" title="Tweet"><i class="fc-webicon twitter large"></i></a>
+        <a href="https://plus.google.com/share?url=http%3a%2f%2flocalhost%3a1313%2fpost%2f2015%2f12%2f10%2fspring-boot-configuration-guided-tour%2f" target="_blank" title="Share on Google+"><i class="fc-webicon googleplus large"></i></a>
+        <a href="mailto:?subject=Spring%20Boot%20Configuration%20guided%20tour&body=Spring%20Boot%20Configuration%20guided%20tour%20description:http%3a%2f%2flocalhost%3a1313%2fpost%2f2015%2f12%2f10%2fspring-boot-configuration-guided-tour%2f" target="_blank" title="Email"><i class="fc-webicon mail large"></i></a>
+        <a href="https://www.facebook.com/sharer/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fpost%2f2015%2f12%2f10%2fspring-boot-configuration-guided-tour%2f&t=Spring%20Boot%20Configuration%20guided%20tour" target="_blank" title="Share on Facebook" class="fc-webicon facebook large"></a>
+        
+    </ul>
+</div>
+            
+<div id="comments">
+    
+    
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        var disqus_shortname = 'obourgeoispro-github-io';
+        var disqus_identifier = 'http:\/\/localhost:1313\/post\/2015\/12\/10\/spring-boot-configuration-guided-tour\/';
+        var disqus_title = 'Spring Boot Configuration guided tour';
+        var disqus_url = 'http:\/\/localhost:1313\/post\/2015\/12\/10\/spring-boot-configuration-guided-tour\/';
+        (function () {
+
+
+            if (window.location.hostname == "localhost") {
+                return;
+            }
+
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    
+</div>
+
+        </article>
+
+        <hr/>
+    </div>
+</div>
+        <footer class="row">
+            <div class="large-12 columns">
+                <hr/>
+                <div class="row">
+                    <div class="large-6 columns">
+                        <p>Powered by <a href="http://gohugo.io" target="_blank">Hugo</a> and <a href="foundation.zurb.com" target="_blank">Foundation</a></p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css" >
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/foundation/5.5.3/css/foundation.min.css">
+        <link rel="stylesheet" href="http://localhost:1313/css/asciidoctor.css">
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css">
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/foundicons/3.0.0/foundation-icons.min.css">
+        <link rel="stylesheet" href="http://localhost:1313/css/fc-webicons.css">
+        <link rel="stylesheet" href="http://localhost:1313/css/style.css">
+        <script type="application/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+        <script type="application/javascript" src="//cdnjs.cloudflare.com/ajax/libs/placeholders/4.0.1/placeholders.min.js"></script>
+        <script type="application/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js"></script>
+        <script type="application/javascript" src="//cdnjs.cloudflare.com/ajax/libs/foundation/5.5.3/js/foundation.min.js"></script>
+        <script type="application/javascript" src="http://localhost:1313/js/vendor/highlight.pack.js"></script>
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.0.0/styles/idea.min.css">
+
+        <script>
+            hljs.initHighlightingOnLoad();
+            $(document).foundation();
+        </script>
+
+	
+	<script data-no-instant>document.write('<script src="http://'
+        + (location.host || 'localhost').split(':')[0]
+		+ ':1313/livereload.js?mindelay=10"></'
+        + 'script>')</script></body>
+</html>

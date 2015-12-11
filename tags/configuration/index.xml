@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Configuration on Olivier&#39;s blog</title>
+    <link>http://localhost:1313/tags/configuration/</link>
+    <description>Recent content in Configuration on Olivier&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-EN</language>
+    <lastBuildDate>Thu, 10 Dec 2015 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/configuration/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Spring Boot Configuration guided tour</title>
+      <link>http://localhost:1313/post/2015/12/10/spring-boot-configuration-guided-tour/</link>
+      <pubDate>Thu, 10 Dec 2015 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/post/2015/12/10/spring-boot-configuration-guided-tour/</guid>
+      <description>&lt;div id=&#34;header&#34;&gt;
+&lt;/div&gt;
+&lt;div id=&#34;content&#34;&gt;
+&lt;div class=&#34;paragraph&#34;&gt;
+&lt;p&gt;In this post I will summarize the things I&amp;#8217;ve learned using &lt;a href=&#34;http://projects.spring.io/spring-boot/&#34;&gt;Spring Boot&lt;/a&gt; configuration system: there is
+excellent documentation on the Spring Boot website, but I found out that things are a bit scattered.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;paragraph&#34;&gt;
+&lt;p&gt;The example project is available on Github: &lt;a href=&#34;https://github.com/obourgeoispro/spring-boot-configuration-demo&#34; class=&#34;bare&#34;&gt;https://github.com/obourgeoispro/spring-boot-configuration-demo&lt;/a&gt; and it shows briefly what are the possibilities offered for configuration.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;sect1&#34;&gt;
+&lt;h2 id=&#34;_first_the_configuration_file&#34;&gt;First, the configuration file&lt;/h2&gt;
+&lt;div class=&#34;sectionbody&#34;&gt;
+&lt;div class=&#34;paragraph&#34;&gt;
+&lt;p&gt;You can use good old properties, but Spring Boot also support &lt;a href=&#34;https://docs.spring.io/spring-boot/docs/current/reference/html/howto-properties-and-configuration.html#howto-use-yaml-for-external-properties&#34;&gt;YAML configuration file&lt;/a&gt;
+as soon as you have SnakeYAML on the classpath. This happens if you import on of the starters such as &lt;code&gt;&lt;code&gt;spring-cloud-starter-config&lt;/code&gt;&lt;/code&gt; in this project, along with the bean validation API and crypto API.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;listingblock&#34;&gt;
+&lt;div class=&#34;content&#34;&gt;
+&lt;pre class=&#34;highlight&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;configuration-app: &lt;i class=&#34;conum&#34; data-value=&#34;1&#34;&gt;&lt;/i&gt;&lt;b&gt;(1)&lt;/b&gt;
+  api-url: http://localhost:8080/api
+  api-key: &#39;{cipher}da1013c5bc07e9bb8de82d082f72504f6852316080afeb89b46b7f54fcd320ab&#39;
+  api-user: testuser
+  connection-timeout: 1000
+  use-ssl: false
+
+spring:
+  application:
+    name: demo
+  profiles:
+    include: native, local
+    active: native, local
+  cloud:
+    config:
+      profile: native
+      server:
+        native:
+          search-locations: classpath:config/  &lt;i class=&#34;conum&#34; data-value=&#34;2&#34;&gt;&lt;/i&gt;&lt;b&gt;(2)&lt;/b&gt;
+
+---   &lt;i class=&#34;conum&#34; data-value=&#34;3&#34;&gt;&lt;/i&gt;&lt;b&gt;(3)&lt;/b&gt;
+
+configuration-app:
+  api-url: http://dev.apiserver.internal
+  api-key: &#39;{cipher}6b1f0b44cdc617e89f9cd0be0c28e369ac161794004d8330a572650d52de151a517a3400fdc0aba5c5b7e5e60732ff0f&#39; &lt;i class=&#34;conum&#34; data-value=&#34;4&#34;&gt;&lt;/i&gt;&lt;b&gt;(4)&lt;/b&gt;
+  api-user: devuser
+  connection-timeout: 1000
+  use-ssl: true
+
+spring:
+  profiles: development
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://some-git-repo.com/configuration   &lt;i class=&#34;conum&#34; data-value=&#34;5&#34;&gt;&lt;/i&gt;&lt;b&gt;(5)&lt;/b&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;colist arabic&#34;&gt;
+&lt;table&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;i class=&#34;conum&#34; data-value=&#34;1&#34;&gt;&lt;/i&gt;&lt;b&gt;1&lt;/b&gt;&lt;/td&gt;
+&lt;td&gt;We define the &lt;code&gt;&lt;code&gt;configuration-app&lt;/code&gt;&lt;/code&gt; namespace that is later used in &lt;code&gt;&lt;code&gt;ConfigurationProperties&lt;/code&gt;&lt;/code&gt;.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;i class=&#34;conum&#34; data-value=&#34;2&#34;&gt;&lt;/i&gt;&lt;b&gt;2&lt;/b&gt;&lt;/td&gt;
+&lt;td&gt;The &lt;code&gt;&lt;code&gt;native&lt;/code&gt;&lt;/code&gt; profile of Spring Cloud Config is configured to use a local property file.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;i class=&#34;conum&#34; data-value=&#34;3&#34;&gt;&lt;/i&gt;&lt;b&gt;3&lt;/b&gt;&lt;/td&gt;
+&lt;td&gt;A single YAML file can contain multiple configurations: this file contains also the &lt;code&gt;&lt;code&gt;development&lt;/code&gt;&lt;/code&gt; profile below this line.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;i class=&#34;conum&#34; data-value=&#34;4&#34;&gt;&lt;/i&gt;&lt;b&gt;4&lt;/b&gt;&lt;/td&gt;
+&lt;td&gt;Properties can be encrypted using Spring Cloud.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;i class=&#34;conum&#34; data-value=&#34;5&#34;&gt;&lt;/i&gt;&lt;b&gt;5&lt;/b&gt;&lt;/td&gt;
+&lt;td&gt;On &lt;code&gt;&lt;code&gt;development&lt;/code&gt;&lt;/code&gt; profile, Spring Cloud Config is configured to look for a file in an online Git repository.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;div class=&#34;admonitionblock note&#34;&gt;
+&lt;table&gt;
+&lt;tr&gt;
+&lt;td class=&#34;icon&#34;&gt;
+&lt;i class=&#34;fa icon-note&#34; title=&#34;Note&#34;&gt;&lt;/i&gt;
+&lt;/td&gt;
+&lt;td class=&#34;content&#34;&gt;
+&lt;a href=&#34;https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-profiles.html&#34;&gt;Spring Profiles&lt;/a&gt; allows to
+separate part of the configuration and make it available only in a specific environment or context. In the demo project there
+are 2 profiles in the same YAML file, but they could also be in a separate file per profile.
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;sect1&#34;&gt;
+&lt;h2 id=&#34;_use_the_configuration_with_spring_components&#34;&gt;Use the configuration with Spring components&lt;/h2&gt;
+&lt;div class=&#34;sectionbody&#34;&gt;
+&lt;div class=&#34;sect2&#34;&gt;
+&lt;h3 id=&#34;_the_new_code_code_value_code_code_annotations&#34;&gt;The new &lt;code&gt;&lt;code&gt;@Value()&lt;/code&gt;&lt;/code&gt; annotations&lt;/h3&gt;
+&lt;div class=&#34;paragraph&#34;&gt;
+&lt;p&gt;You can use a new syntax inherited from Groovy (which works for Java classes as well) that allows you to inject your
+configuration into class members using annotations:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;listingblock&#34;&gt;
+&lt;div class=&#34;content&#34;&gt;
+&lt;pre class=&#34;highlight&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;import org.springframework.stereotype.*
+import org.springframework.beans.factory.annotation.*
+
+@Component
+public class MyBean {
+
+    @Value(&#34;${api-url}&#34;) &lt;i class=&#34;conum&#34; data-value=&#34;1&#34;&gt;&lt;/i&gt;&lt;b&gt;(1)&lt;/b&gt;
+    private String apiUrl;
+
+    // ...
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;colist arabic&#34;&gt;
+&lt;table&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;i class=&#34;conum&#34; data-value=&#34;1&#34;&gt;&lt;/i&gt;&lt;b&gt;1&lt;/b&gt;&lt;/td&gt;
+&lt;td&gt;New &#34;Groovy like&#34; syntax.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;div class=&#34;paragraph&#34;&gt;
+&lt;p&gt;This is practical and quick, but is clearly tedious and cumbersome for anything substantial.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;sect2&#34;&gt;
+&lt;h3 id=&#34;_type_safe_configuration_properties&#34;&gt;Type-safe configuration properties&lt;/h3&gt;
+&lt;div class=&#34;paragraph&#34;&gt;
+&lt;p&gt;So I preferred to use the new strongly typed configuration that can automatically bind the properties to a POJO&#34;this avoid the use of
+fragile String references. Here is the Bean that is used in the demo project and that is bound to the YAML file we&amp;#8217;ve seen before:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;listingblock&#34;&gt;
+&lt;div class=&#34;content&#34;&gt;
+&lt;pre class=&#34;highlight&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;package demo;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
+
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.NotNull;
+import java.net.URL;
+
+@Component
+@ConfigurationProperties(prefix = &#34;configuration-app&#34;)   &lt;i class=&#34;conum&#34; data-value=&#34;1&#34;&gt;&lt;/i&gt;&lt;b&gt;(1)&lt;/b&gt;
+public class SpringBootPropertiesApplicationSettings {
+
+    @NotNull
+    private URL apiUrl;        &lt;i class=&#34;conum&#34; data-value=&#34;2&#34;&gt;&lt;/i&gt;&lt;b&gt;(2)&lt;/b&gt;
+    @NotNull
+    private String apiKey;
+    @NotNull
+    private String apiUser;
+    @Digits(integer = 12, fraction = 0)    &lt;i class=&#34;conum&#34; data-value=&#34;3&#34;&gt;&lt;/i&gt;&lt;b&gt;(3)&lt;/b&gt;
+    private int connectionTimeout;
+    private boolean useSSL;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;colist arabic&#34;&gt;
+&lt;table&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;i class=&#34;conum&#34; data-value=&#34;1&#34;&gt;&lt;/i&gt;&lt;b&gt;1&lt;/b&gt;&lt;/td&gt;
+&lt;td&gt;We define a configuration Bean that is configured to be bound to the properties under the namespace &lt;code&gt;&lt;code&gt;configuration-app&lt;/code&gt;&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;i class=&#34;conum&#34; data-value=&#34;2&#34;&gt;&lt;/i&gt;&lt;b&gt;2&lt;/b&gt;&lt;/td&gt;
+&lt;td&gt;In YAML we are using &lt;code&gt;&lt;code&gt;api-url&lt;/code&gt;&lt;/code&gt;, but the Bean is using &lt;code&gt;&lt;code&gt;apiUrl&lt;/code&gt;&lt;/code&gt;, following Java conventions. This is called relaxed binding, and it just works.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;i class=&#34;conum&#34; data-value=&#34;3&#34;&gt;&lt;/i&gt;&lt;b&gt;3&lt;/b&gt;&lt;/td&gt;
+&lt;td&gt;Standard JSR-303 annotations can be used to validate the properties.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;div class=&#34;admonitionblock note&#34;&gt;
+&lt;table&gt;
+&lt;tr&gt;
+&lt;td class=&#34;icon&#34;&gt;
+&lt;i class=&#34;fa icon-note&#34; title=&#34;Note&#34;&gt;&lt;/i&gt;
+&lt;/td&gt;
+&lt;td class=&#34;content&#34;&gt;
+&lt;div class=&#34;title&#34;&gt;Relaxed binding&lt;/div&gt;
+&lt;div class=&#34;paragraph&#34;&gt;
+&lt;p&gt;&lt;a href=&#34;http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html#boot-features-external-config-relaxed-binding&#34;&gt;Relaxed binding&lt;/a&gt;
+is used to try different combinations of uppercase, lowercase and underscore. For instance APIURL, API-URL, api_url are all resolved to the same Java property apiUrl with setter &lt;code&gt;&lt;code&gt;setApiUrl&lt;/code&gt;&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;sect1&#34;&gt;
+&lt;h2 id=&#34;_validate_and_avoid_typos&#34;&gt;Validate and avoid typos&lt;/h2&gt;
+&lt;div class=&#34;sectionbody&#34;&gt;
+&lt;div class=&#34;sect2&#34;&gt;
+&lt;h3 id=&#34;_type_safe_configuration_and_jsr_303_validation&#34;&gt;Type-safe configuration and JSR-303 validation&lt;/h3&gt;
+&lt;div class=&#34;paragraph&#34;&gt;
+&lt;p&gt;If you are using type-safe configuration and JSR-303 annotations, shall your configuration file contain a typo or mistake, Spring will fail fast and print an error message.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;listingblock&#34;&gt;
+&lt;div class=&#34;content&#34;&gt;
+&lt;pre class=&#34;highlight&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;Caused by: org.springframework.validation.BindException: org.springframework.validation.BeanPropertyBindingResult: 2 errors
+Field error in object &#39;configuration-app&#39; on field &#39;apiUrl&#39;: rejected value [http//localhost:8080/api]; codes [typeMismatch.configuration-app.apiUrl,typeMismatch.apiUrl,typeMismatch.java.net.URL,typeMismatch]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [configuration-app.apiUrl,apiUrl]; arguments []; default message [apiUrl]]; default message [Failed to convert property value of type &#39;java.lang.String&#39; to required type &#39;java.net.URL&#39; for property &#39;apiUrl&#39;; nested exception is org.springframework.core.convert.ConverterNotFoundException: No converter found capable of converting from type java.lang.String to type @javax.validation.constraints.NotNull java.net.URL] &lt;i class=&#34;conum&#34; data-value=&#34;1&#34;&gt;&lt;/i&gt;&lt;b&gt;(1)&lt;/b&gt;
+Field error in object &#39;configuration-app&#39; on field &#39;connectionTimeout&#39;: rejected value [blah]; codes [typeMismatch.configuration-app.connectionTimeout,typeMismatch.connectionTimeout,typeMismatch.int,typeMismatch]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [configuration-app.connectionTimeout,connectionTimeout]; arguments []; default message [connectionTimeout]]; default message [Failed to convert property value of type &#39;java.lang.String&#39; to required type &#39;int&#39; for property &#39;connectionTimeout&#39;; nested exception is org.springframework.core.convert.ConverterNotFoundException: No converter found capable of converting from type java.lang.String to type @javax.validation.constraints.Digits int] &lt;i class=&#34;conum&#34; data-value=&#34;2&#34;&gt;&lt;/i&gt;&lt;b&gt;(2)&lt;/b&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;colist arabic&#34;&gt;
+&lt;table&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;i class=&#34;conum&#34; data-value=&#34;1&#34;&gt;&lt;/i&gt;&lt;b&gt;1&lt;/b&gt;&lt;/td&gt;
+&lt;td&gt;Informs that &lt;code&gt;&lt;code&gt;http//localhost:8080/api&lt;/code&gt;&lt;/code&gt; is not a valid URL and cannot be converted to java.net.URL.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;i class=&#34;conum&#34; data-value=&#34;2&#34;&gt;&lt;/i&gt;&lt;b&gt;2&lt;/b&gt;&lt;/td&gt;
+&lt;td&gt;This field expects digits only and we provided a String as configuration.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;div class=&#34;paragraph&#34;&gt;
+&lt;p&gt;If you want to go further with validation of properties, you can also create your own &lt;a href=&#34;https://github.com/spring-projects/spring-boot/tree/master/spring-boot-samples/spring-boot-sample-property-validation&#34;&gt;Custom validators&lt;/a&gt;
+and of course replace the default messages with custom (translated) messages.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;sect2&#34;&gt;
+&lt;h3 id=&#34;_generate_configuration_meta_data_for_documentation_and_avoid_typos_in_ide&#34;&gt;Generate configuration meta-data for documentation and avoid typos in IDE&lt;/h3&gt;
+&lt;div class=&#34;paragraph&#34;&gt;
+&lt;p&gt;Spring Boot provides an annotation processor that can scan your configuration Beans and generate JSON documentation from the JavaDoc: see
+&lt;a href=&#34;http://docs.spring.io/spring-boot/docs/1.2.5.RELEASE/reference/html/configuration-metadata.html#configuration-metadata-annotation-processor&#34;&gt;Spring boot annotation processor setup&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;paragraph&#34;&gt;
+&lt;p&gt;This JSON documentation is then used by your IDE to offer completion and validation of properties on the fly: this works with Eclipse, Netbean and IntelliJ.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;imageblock&#34;&gt;
+&lt;div class=&#34;content&#34;&gt;
+&lt;img src=&#34;../custom-props-completion.PNG&#34; alt=&#34;Custom properties completion&#34;&gt;
+&lt;/div&gt;
+&lt;div class=&#34;title&#34;&gt;Figure 1. Custom properties completion&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;paragraph&#34;&gt;
+&lt;p&gt;This is also working with the relaxed binding!&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;imageblock&#34;&gt;
+&lt;div class=&#34;content&#34;&gt;
+&lt;img src=&#34;../relaxed-binding-validation.PNG&#34; alt=&#34;Relaxed binding validation&#34;&gt;
+&lt;/div&gt;
+&lt;div class=&#34;title&#34;&gt;Figure 2. Relaxed binding validation&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;sect1&#34;&gt;
+&lt;h2 id=&#34;_spring_cloud_config&#34;&gt;Spring Cloud Config&lt;/h2&gt;
+&lt;div class=&#34;sectionbody&#34;&gt;
+&lt;div class=&#34;paragraph&#34;&gt;
+&lt;p&gt;&lt;a href=&#34;http://cloud.spring.io/spring-cloud-config/&#34;&gt;Spring Cloud Config&lt;/a&gt; is an extra module that provides server and client-side support for externalized configuration in a distributed system.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;sect2&#34;&gt;
+&lt;h3 id=&#34;_encrypt_sensitive_properties&#34;&gt;Encrypt sensitive properties&lt;/h3&gt;
+&lt;div class=&#34;paragraph&#34;&gt;
+&lt;p&gt;In Spring Cloud Config you&amp;#8217;ll also find a feature to encrypt and decrypt sensitive properties. You can use symmetric encryption with a key configured in the &lt;code&gt;&lt;code&gt;bootstrap.yml&lt;/code&gt;&lt;/code&gt; file,
+or, more realistically, you&amp;#8217;ll want to use the system property &lt;code&gt;&lt;code&gt;ENCRYPT_KEY&lt;/code&gt;&lt;/code&gt; or a parameter on the command line to keep the encryption key secret. There is also
+the possibility to use &lt;a href=&#34;http://cloud.spring.io/spring-cloud-config/spring-cloud-config.html#_key_management&#34;&gt;asymmetric keys&lt;/a&gt; after configuring a keystore.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;paragraph&#34;&gt;
+&lt;p&gt;To encrypt your properties, you can use the command line with &lt;a href=&#34;http://cloud.spring.io/spring-cloud-cli/&#34;&gt;Spring Cloud CLI&lt;/a&gt; or use the
+REST endpoint &lt;code&gt;&lt;code&gt;&lt;a href=&#34;http://localhost:8080/encrypt&#34; class=&#34;bare&#34;&gt;http://localhost:8080/encrypt&lt;/a&gt;&lt;/code&gt;&lt;/code&gt; and POST the properties to encrypt.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;admonitionblock caution&#34;&gt;
+&lt;table&gt;
+&lt;tr&gt;
+&lt;td class=&#34;icon&#34;&gt;
+&lt;i class=&#34;fa icon-caution&#34; title=&#34;Caution&#34;&gt;&lt;/i&gt;
+&lt;/td&gt;
+&lt;td class=&#34;content&#34;&gt;
+&lt;div class=&#34;title&#34;&gt;Exception due to &#34;illegal key size&#34;&lt;/div&gt;
+You&amp;#8217;ll probably get this exception if you are using the SUN JDK, and the project README explains
+&lt;a href=&#34;https://github.com/spring-cloud/spring-cloud-commons&#34;&gt;how to install the Java Cryptographic Extension&lt;/a&gt; in your Java runtime.
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;sect2&#34;&gt;
+&lt;h3 id=&#34;_manage_the_cloud_configuration_server&#34;&gt;Manage the Cloud configuration server&lt;/h3&gt;
+&lt;div class=&#34;paragraph&#34;&gt;
+&lt;p&gt;When your system grows, you usually want to streamline the deployment of new configuration and keep track of configuration changes: this can be done by storing the configuration files in source
+control and deploy them using Spring Cloud Configuration server. For production it is recommended to use a Git server, but the demo project is configured to look for a property file in the default path &lt;code&gt;&lt;code&gt;resources/config&lt;/code&gt;&lt;/code&gt; and
+&lt;a href=&#34;https://stackoverflow.com/questions/27131143/spring-cloud-configuration-server-not-working-with-local-properties-file&#34;&gt;activates the native profile&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;paragraph&#34;&gt;
+&lt;p&gt;Spring Cloud Config also offers a mechanism to &lt;a href=&#34;http://cloud.spring.io/spring-cloud-config/spring-cloud-config.html#_push_notifications_and_spring_cloud_bus&#34;&gt;dynamically reload the properties using a webhook&lt;/a&gt; so you can trigger the reload on new commit in Github for instance.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;sect2&#34;&gt;
+&lt;h3 id=&#34;_a_few_management_urls&#34;&gt;A few management URLs&lt;/h3&gt;
+&lt;div class=&#34;paragraph&#34;&gt;
+&lt;p&gt;Here are some interesting URLs for checking and managing properties:&lt;/p&gt;
+&lt;/div&gt;
+&lt;table class=&#34;tableblock frame-all grid-all spread&#34;&gt;
+&lt;colgroup&gt;
+&lt;col style=&#34;width: 33%;&#34;&gt;
+&lt;col style=&#34;width: 33%;&#34;&gt;
+&lt;col style=&#34;width: 33%;&#34;&gt;
+&lt;/colgroup&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td class=&#34;tableblock halign-left valign-top&#34;&gt;&lt;p class=&#34;tableblock&#34;&gt;Pattern&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&#34;tableblock halign-left valign-top&#34;&gt;&lt;p class=&#34;tableblock&#34;&gt;Example&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&#34;tableblock halign-left valign-top&#34;&gt;&lt;p class=&#34;tableblock&#34;&gt;Description&lt;/p&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class=&#34;tableblock halign-left valign-top&#34;&gt;&lt;p class=&#34;tableblock&#34;&gt;{host}:{port}/configprops&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&#34;tableblock halign-left valign-top&#34;&gt;&lt;p class=&#34;tableblock&#34;&gt;&lt;a href=&#34;http://localhost:8080/configprops&#34; class=&#34;bare&#34;&gt;http://localhost:8080/configprops&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&#34;tableblock halign-left valign-top&#34;&gt;&lt;p class=&#34;tableblock&#34;&gt;A collated list of all &lt;code&gt;&lt;code&gt;@ConfigurationProperties&lt;/code&gt;&lt;/code&gt;&lt;/p&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class=&#34;tableblock halign-left valign-top&#34;&gt;&lt;p class=&#34;tableblock&#34;&gt;{host}:{port}/{application}/{profile}&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&#34;tableblock halign-left valign-top&#34;&gt;&lt;p class=&#34;tableblock&#34;&gt;&lt;a href=&#34;http://localhost:8080/demo/default&#34; class=&#34;bare&#34;&gt;http://localhost:8080/demo/default&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&#34;tableblock halign-left valign-top&#34;&gt;&lt;p class=&#34;tableblock&#34;&gt;Properties for a specific profile&lt;/p&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class=&#34;tableblock halign-left valign-top&#34;&gt;&lt;/td&gt;
+&lt;td class=&#34;tableblock halign-left valign-top&#34;&gt;&lt;p class=&#34;tableblock&#34;&gt;&lt;a href=&#34;http://localhost:8080/env&#34; class=&#34;bare&#34;&gt;http://localhost:8080/env&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&#34;tableblock halign-left valign-top&#34;&gt;&lt;p class=&#34;tableblock&#34;&gt;Properties from &lt;code&gt;&lt;code&gt;ConfigurableEnvironment&lt;/code&gt;&lt;/code&gt;&lt;/p&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;sect1&#34;&gt;
+&lt;h2 id=&#34;_going_further&#34;&gt;Going further&lt;/h2&gt;
+&lt;div class=&#34;sectionbody&#34;&gt;
+&lt;div class=&#34;paragraph&#34;&gt;
+&lt;p&gt;We&amp;#8217;ve already seen a few tricks, but that was just to whet your appetite: there is much more to discover if you read the documentation. There are also a few good reads
+ I recommend that will help you to structure and rationalize the usage of configuration in your application.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;ulist&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;First and foremost, the reference for Spring Boot externalized configuration&lt;/p&gt;
+&lt;div class=&#34;ulist&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&#34;https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html&#34; class=&#34;bare&#34;&gt;https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;em&gt;The twelve factor app&lt;/em&gt; : a well known methodology and list of guidelines on how to develop applications with deployment in mind. The point III focuses on configuration (but of course
+the whole document is worth reading)&lt;/p&gt;
+&lt;div class=&#34;ulist&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&#34;http://12factor.net/&#34; class=&#34;bare&#34;&gt;http://12factor.net/&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&#34;http://12factor.net/config&#34; class=&#34;bare&#34;&gt;http://12factor.net/config&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;em&gt;&#34;Configuring It All Out&#34; or &#34;12-Factor App-Style Configuration with Spring&#34;&lt;/em&gt; : explains how to apply the 12 factor principles with Spring Boot. This covers Spring Cloud Configuration
+and explains how to refresh the configuration using the Spring Cloud Bus.&lt;/p&gt;
+&lt;div class=&#34;ulist&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&#34;https://spring.io/blog/2015/01/13/configuring-it-all-out-or-12-factor-app-style-configuration-with-spring&#34; class=&#34;bare&#34;&gt;https://spring.io/blog/2015/01/13/configuring-it-all-out-or-12-factor-app-style-configuration-with-spring&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;em&gt;Binding to Data Services with Spring Boot in Cloud Foundry&lt;/em&gt; : explains how to bind services to a Spring Boot application following the 12 factor guidelines and auto-configuration feature.&lt;/p&gt;
+&lt;div class=&#34;ulist&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&#34;https://spring.io/blog/2015/04/27/binding-to-data-services-with-spring-boot-in-cloud-foundry&#34; class=&#34;bare&#34;&gt;https://spring.io/blog/2015/04/27/binding-to-data-services-with-spring-boot-in-cloud-foundry&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;sect1&#34;&gt;
+&lt;h2 id=&#34;_conclusion&#34;&gt;Conclusion&lt;/h2&gt;
+&lt;div class=&#34;sectionbody&#34;&gt;
+&lt;div class=&#34;paragraph&#34;&gt;
+&lt;p&gt;Spring, as an enterprise framework, always had excellent support for application configuration, and when working with Spring Boot I was glad to see that this support is even better now.
+It seems to me that configuration and logging are often overlooked topics as they seem to be a mundane task, however, experience shows that to have well thought logging and application configuration can save a lot of money (e.g. time) to your company.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;footer&#34;&gt;
+&lt;div id=&#34;footer-text&#34;&gt;
+Last updated 2015-12-11 12:00:52 W. Europe Standard Time
+&lt;/div&gt;
+&lt;/div&gt;</description>
+    </item>
+    
+  </channel>
+</rss>
