@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Posts on Olivier&#39;s blog</title>
-    <link>http://localhost:1313/post/</link>
+    <link>http://blog.obourgeois.me/post/</link>
     <description>Recent content in Posts on Olivier&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-EN</language>
     <lastBuildDate>Thu, 10 Dec 2015 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:1313/post/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://blog.obourgeois.me/post/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Spring Boot Configuration guided tour</title>
-      <link>http://localhost:1313/post/2015/12/10/spring-boot-configuration-guided-tour/</link>
+      <link>http://blog.obourgeois.me/post/2015/12/10/spring-boot-configuration-guided-tour/</link>
       <pubDate>Thu, 10 Dec 2015 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/post/2015/12/10/spring-boot-configuration-guided-tour/</guid>
+      <guid>http://blog.obourgeois.me/post/2015/12/10/spring-boot-configuration-guided-tour/</guid>
       <description>&lt;div id=&#34;header&#34;&gt;
 &lt;/div&gt;
 &lt;div id=&#34;content&#34;&gt;
@@ -424,7 +424,7 @@ It seems to me that configuration and logging are often overlooked topics as the
 &lt;/div&gt;
 &lt;div id=&#34;footer&#34;&gt;
 &lt;div id=&#34;footer-text&#34;&gt;
-Last updated 2015-12-11 12:00:52 W. Europe Standard Time
+Last updated 2015-12-11 12:43:50 W. Europe Standard Time
 &lt;/div&gt;
 &lt;/div&gt;</description>
     </item>
