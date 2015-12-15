@@ -29,7 +29,7 @@ footnoteReturnLinkContents: ""
 languageCode:               "en-EN"
 layoutdir:                  "layouts"
 # Enable Logging
-log:                        false
+log:                        true
 # Log File path (if set, logging enabled automatically)
 logFile:                    ""
 # "yaml", "toml", "json"
@@ -71,7 +71,9 @@ verbose:                    false
 verboseLog:                 false
 # watch filesystem for changes and recreate as needed
 watch:                      false
+
 disqusShortname: "obourgeoispro-github-io"
+googleAnalytics: "UA-71115937-1"
 
 params:
   # Sidebar position
@@ -86,9 +88,6 @@ params:
   # Select a syntax highight.
   # Check the Highlight.js website for options.
   highlight: "idea"
-
-  # Google Analytics.
-  googleAnalytics: "UA-71115937-1"
 
   # Sidebar social links.
   github: "obourgeoispro" # Your Github profile ID

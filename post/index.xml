@@ -15,10 +15,7 @@
       <pubDate>Thu, 10 Dec 2015 00:00:00 +0000</pubDate>
       
       <guid>http://blog.obourgeois.me/post/2015/12/10/spring-boot-configuration-guided-tour/</guid>
-      <description>&lt;div id=&#34;header&#34;&gt;
-&lt;/div&gt;
-&lt;div id=&#34;content&#34;&gt;
-&lt;div class=&#34;paragraph&#34;&gt;
+      <description>&lt;div class=&#34;paragraph&#34;&gt;
 &lt;p&gt;In this post I will summarize the things I&amp;#8217;ve learned using &lt;a href=&#34;http://projects.spring.io/spring-boot/&#34;&gt;Spring Boot&lt;/a&gt; configuration system: there is
 excellent documentation on the Spring Boot website, but I found out that things are a bit scattered.&lt;/p&gt;
 &lt;/div&gt;
@@ -421,12 +418,7 @@ It seems to me that configuration and logging are often overlooked topics as the
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;/div&gt;
-&lt;div id=&#34;footer&#34;&gt;
-&lt;div id=&#34;footer-text&#34;&gt;
-Last updated 2015-12-15 10:32:38 W. Europe Standard Time
-&lt;/div&gt;
-&lt;/div&gt;</description>
+</description>
     </item>
     
   </channel>

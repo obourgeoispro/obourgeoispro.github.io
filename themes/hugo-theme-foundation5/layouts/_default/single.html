@@ -18,7 +18,7 @@
 
             {{ .Content }}
             {{ partial "share.html" . }}
-            {{ partial "comments.html" . }}
+            {{ template "_internal/disqus.html" . }}
         </article>
 
         <hr/>
