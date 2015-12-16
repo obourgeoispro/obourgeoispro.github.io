@@ -3,8 +3,8 @@
 
 name = "Foundation5"
 license = "MIT"
-licenselink = "https://github.com/yourname/yourtheme/blob/master/LICENSE.md"
-description = "Foundation 5 blog template ported to Hugo"
+licenselink = "https://github.com/obourgeoispro/hugo-theme-foundation5/blob/master/LICENSE.md"
+description = "Foundation 5 blog template ported to Hugo with support for Asciidoc and syntax highlighting"
 homepage = "http://blog.obourgeois.me/"
 tags = ["foundation", "asciidoc", "minimal"]
 features = ["", ""]
