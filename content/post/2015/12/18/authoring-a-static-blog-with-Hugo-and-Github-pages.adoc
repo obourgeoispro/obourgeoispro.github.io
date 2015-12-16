@@ -1,0 +1,39 @@
+---
+title: "Authoring a static blog with Hugo and Github pages"
+description: "Authoring a static blog with Hugo and Github pages"
+tags: [ "Hugo", "Blogging", "Static", "Github Pages", "Git" ]
+date: "2015-12-16"
+publishdate: "2015-12-16"
+draft: true
+categories:
+  - "Development"
+  - "Website"
+  - "Go"
+id: static-blog-hugo-ghpages
+---
+:id: static-blog-hugo-ghpages
+:icons: font
+:gradle: http://www.gradle.org[Gradle]
+:asciidoc: http://asciidoctor.org/[AsciiDoctor]
+:hugo: http://gohugo.io[Hugo]
+
+I will explain how to author a static blog (or website) using {asciidoc} and {hugo} generator, using a Foundation 5 theme.
+
+== Create the Hugo project
+
+== Import the theme as a Git submodule
+
+[source,bash]
+----
+git remote add hugo-theme-foundation5 git@github.com:obourgeoispro/hugo-theme-foundation5.git
+git subtree add --prefix=themes/foundation5 hugo-theme-foundation5 master
+
+git fetch hugo-theme-foundation5 master
+From github.com:obourgeoispro/hugo-theme-foundation5
+ * branch            master     -> FETCH_HEAD
+Added dir 'themes/foundation5'
+----
+
+== Setup the configuration
+
+== Optional: add an external tool in IntelliJ

@@ -60,7 +60,7 @@ taxonomies:
   tag: "tags"
   topic: "topics"
 # theme to use (located in /themes/THEMENAME/)
-theme:                      "hugo-theme-foundation5" #"hugo-theme-crisp" #"hyde-y"
+theme:                      "foundation5" #"hugo-theme-crisp" #"hyde-y"
 title:                      "Olivier's blog"
 description:                "Olivier's blog"
 # if true, use /filename.html instead of /filename/
