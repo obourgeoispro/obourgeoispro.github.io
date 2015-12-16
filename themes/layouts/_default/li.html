@@ -1,0 +1,31 @@
+{{ $baseurl := .Site.BaseURL }}
+<div class="row">
+	<div class="large-9 columns" role="content">
+		<article id="{{ .Slug }}">
+			<h3><a href="{{ .Permalink }}">{{ .Title }}</a></h3>
+			<h6>
+				<time datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" | safeHTML }}">
+					{{ .Date.Format "2 Jan 2006" }}
+				</time>
+				{{ partial "metas.html" . }}
+			</h6>
+			{{if .Params.tags }}
+								&middot;
+								{{ range $index, $tag := .Params.tags }}
+					<a href="{{ $baseurl }}tags/{{ $tag | urlize }}/"><span class="label">{{ $tag }}</span></a>
+				{{ end }}
+			{{ end }}
+			<!-- TODO Summary and preview image.
+			<!--<div class="row">-->
+				<!--<div class="large-6 columns">-->
+					<!--{{ .Summary }}-->
+				<!--</div>-->
+				<!--<div class="large-6 columns">-->
+					<!--<img src="http://placehold.it/400x240&text=[img]"/>-->
+				<!--</div>-->
+			<!--</div>-->
+		</article>
+
+		<hr/>
+	</div>
+</div>

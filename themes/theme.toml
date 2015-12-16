@@ -1,0 +1,21 @@
+# theme.toml template for a Hugo theme
+# See https://github.com/spf13/hugoThemes#themetoml for an example
+
+name = "Foundation5"
+license = "MIT"
+licenselink = "https://github.com/obourgeoispro/hugo-theme-foundation5/blob/master/LICENSE.md"
+description = "Foundation 5 blog template ported to Hugo with support for Asciidoc and syntax highlighting"
+homepage = "http://blog.obourgeois.me/"
+tags = ["foundation", "asciidoc", "minimal"]
+features = ["", ""]
+min_version = 0.14
+
+[author]
+  name = "Olivier Bourgeois"
+  homepage = "http://blog.obourgeois.me/"
+
+# If porting an existing theme
+[original]
+  name = ""
+  homepage = ""
+  repo = ""
