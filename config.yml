@@ -76,15 +76,6 @@ disqusShortname: "obourgeoispro-github-io"
 googleAnalytics: "UA-71115937-1"
 
 params:
-  # Sidebar position
-  # false, true, "left", "right"
-  sidebar: "true"
-  comments: "true"
-
-  # Text for the top menu link, which goes the root URL for the site.
-  # Default (if omitted) is "Home".
-  home: "Home"
-
   # Select a syntax highight.
   # Check the Highlight.js website for options.
   highlight: "idea"
@@ -98,4 +89,8 @@ params:
   twitter: "OlivierZentak" # Your Twitter profile ID
   youtube: ""  # Your Youtube channel ID
   flattr: ""  # populate with your flattr uid
+
+  # SEO
+  bingSiteAuth: "EAE2AED6CFAD2E4D39C13E3C2E3364C2" #website property verification meta for Bing bot
+  googleSiteAuth: "e3fRS3IkyqIQqgoee6387qwd8QmblCDpFuGHxKD0gS4" #website property verification meta for Google bot
 ---
