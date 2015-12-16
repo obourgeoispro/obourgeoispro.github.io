@@ -1,0 +1,10 @@
+{{ with .Site.Params.twitter}}
+<li><a href="http://twitter.com/{{ . }}" rel="me">Twitter</a></li>
+{{ end }}
+{{ with .Site.Params.linkedin}}
+<li><a href="http://linkedin.com/in/{{ . }}" rel="me">LinkedIn</a></li>
+{{ end }}
+{{ with .Site.Params.github }}
+<li><a href="http://github.com/{{ . }}" rel="me">Github</a></li>
+{{ end }}
+<li><a href="{{ .Site.BaseURL }}index.xml" rel="me">RSS Feed</a></li>
