@@ -1,9 +1,0 @@
-/*Default in asciidoctor.css is white text on black background*/
-#footer {
-    background-color: inherit;
-    color: inherit;
-}
-#footer-text {
-    background-color: inherit;
-    color: inherit;
-}
